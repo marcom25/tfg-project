@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { geistMono, geistSans } from "@/font";
-import Navbar from "@/components/navbar";
+import Navbar from "@/components/nbar";
 
 
 
