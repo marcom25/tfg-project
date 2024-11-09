@@ -1,16 +1,46 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { StarIcon, MessageCircleIcon, PhoneIcon, MailIcon } from "lucide-react"
-import { Textarea } from "@/components/ui/textarea"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { StarIcon, MessageCircleIcon, PhoneIcon, MailIcon } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 
-export default function Page() {
+type ProviderInfoProps = {
+  params: {
+    id: number;
+  };
+};
+
+export default function Page({ params }: ProviderInfoProps) {
+  const id = params.id;
+
+  console.log(id)
   const comments = [
-    { id: 1, author: "Cliente Satisfecho", rating: 5, comment: "Excelente servicio, muy profesional y puntual." },
-    { id: 2, author: "Usuario Contento", rating: 4, comment: "Buen trabajo, aunque hubo un pequeño retraso en la entrega." },
-    { id: 3, author: "Cliente Recurrente", rating: 5, comment: "Siempre entrega un trabajo de calidad. Muy recomendado." },
-  ]
+    {
+      id: 1,
+      author: "Cliente Satisfecho",
+      rating: 5,
+      comment: "Excelente servicio, muy profesional y puntual.",
+    },
+    {
+      id: 2,
+      author: "Usuario Contento",
+      rating: 4,
+      comment: "Buen trabajo, aunque hubo un pequeño retraso en la entrega.",
+    },
+    {
+      id: 3,
+      author: "Cliente Recurrente",
+      rating: 5,
+      comment: "Siempre entrega un trabajo de calidad. Muy recomendado.",
+    },
+  ];
 
   return (
     <div className="max-w-4xl mx-auto p-4">
@@ -34,8 +64,9 @@ export default function Page() {
             <div>
               <h3 className="font-semibold mb-2">Descripción</h3>
               <p className="text-sm text-gray-600">
-                Soy un profesional con experiencia en diseño gráfico y desarrollo web. Me especializo en crear
-                soluciones visuales atractivas y funcionales para mis clientes.
+                Soy un profesional con experiencia en diseño gráfico y
+                desarrollo web. Me especializo en crear soluciones visuales
+                atractivas y funcionales para mis clientes.
               </p>
             </div>
             <div>
@@ -83,7 +114,9 @@ export default function Page() {
                       <StarIcon
                         key={i}
                         className={`w-4 h-4 ${
-                          i < comment.rating ? 'text-yellow-400' : 'text-gray-300'
+                          i < comment.rating
+                            ? "text-yellow-400"
+                            : "text-gray-300"
                         }`}
                       />
                     ))}
@@ -99,14 +132,20 @@ export default function Page() {
             <div className="flex items-center mb-2">
               <span className="mr-2">Tu puntuación:</span>
               {[...Array(5)].map((_, i) => (
-                <StarIcon key={i} className="w-5 h-5 text-gray-300 cursor-pointer hover:text-yellow-400" />
+                <StarIcon
+                  key={i}
+                  className="w-5 h-5 text-gray-300 cursor-pointer hover:text-yellow-400"
+                />
               ))}
             </div>
-            <Textarea placeholder="Escribe tu comentario aquí..." className="mb-2" />
+            <Textarea
+              placeholder="Escribe tu comentario aquí..."
+              className="mb-2"
+            />
             <Button>Enviar comentario</Button>
           </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
