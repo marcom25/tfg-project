@@ -1,36 +1,28 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Trabajo Final De Grado
+Estas son las intruccion para descargar, instalar y ejecutar el proyecto.
 
-## Getting Started
+## Descarga
+Para este proyecto se necesita como minimo la versión de [Node.js 18.8](https://nodejs.org/en).
 
-First, run the development server:
+Para obtener el codigo fuente, clonar este mismo repositorio.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Instalación
+Una vez clonado el repositorio, debe pararse en el directorio en donde fue clonado, desde una terminal de comandos. El directorio tendría que decir `tfg-project`.
+
+Cuando ya se encuentre en el directorio, ejecutar el siguiente comando.
+
+```
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Ejecución
+Luego de realizar la instalación, para poder ejecutar el proyecto debe ejecutar el siguiente comando en el mismo directorio que realizo la instalacion.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Y listo, podra ver la aplicación en funcionamiento en su [localhost:3000](http://localhost:3000/).
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Demo En Vivo
+Si no quiere instalar el proyecto, puede verlo funcionando [aquí](https://tfg-project.vercel.app/)
