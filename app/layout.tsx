@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "./globals.css";
 import { geistMono, geistSans } from "@/font";
 import Navbar from "@/components/navbar";
 
