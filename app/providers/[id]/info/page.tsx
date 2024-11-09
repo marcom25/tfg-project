@@ -11,13 +11,13 @@ import { Badge } from "@/components/ui/badge";
 import { StarIcon, MessageCircleIcon, PhoneIcon, MailIcon } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 
-type ProviderInfoProps = {
-  params: {
-    id: number;
-  };
-};
+// type ProviderInfoProps = {
+//   params: {
+//     id: number;
+//   };
+// };
 
-export default function Page({ params }: ProviderInfoProps) {
+export default function Page({params} : {params: {id: string}}) {
   const id = params.id;
 
   console.log(id)
