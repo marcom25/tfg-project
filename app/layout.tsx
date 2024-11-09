@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-import "./globals.css";
-import Navbar from "@/components/navbar";
 import { geistMono, geistSans } from "@/font";
+import Navbar from "@/components/navbar";
 
 
 
 export const metadata: Metadata = {
-  title: "CareConnect",
+  title: "Care Connect",
   description: "Trabajo Final de Grado de Marco Mignacco, CareConnect una app para conectar niñeras y cuidadores domiciliarios con clientes",
 };
 
