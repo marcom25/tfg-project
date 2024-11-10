@@ -13,7 +13,7 @@ export default function Page() {
       name: "Agostina Heinzmann",
       rating: 4.8,
       location: "Buenos Aires",
-      specialties: ["Petera", "Trola Profesional"],
+      specialties: ["Bestie", "🧚🧚🧚🧚"],
       image: "/placeholder.svg?height=150&width=150",
     },
     {

@@ -8,8 +8,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { StarIcon, MessageCircleIcon, PhoneIcon, MailIcon } from "lucide-react";
+import {
+  StarIcon,
+  MessageCircleIcon,
+  MailIcon,
+  NotepadText,
+} from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import Link from "next/link";
 
 type ProviderInfoProps = {
   params: Promise<{
@@ -86,12 +92,14 @@ export default async function Page({ params }: ProviderInfoProps) {
                   Enviar mensaje
                 </Button>
                 <Button variant="outline" size="sm">
-                  <PhoneIcon className="w-4 h-4 mr-2" />
-                  Llamar
-                </Button>
-                <Button variant="outline" size="sm">
                   <MailIcon className="w-4 h-4 mr-2" />
                   Enviar email
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Link href={`/providers/createReserve`} className="flex">
+                  <NotepadText className="w-4 h-4 mr-2" />
+                  Reservar turno
+                  </Link>
                 </Button>
               </div>
             </div>
