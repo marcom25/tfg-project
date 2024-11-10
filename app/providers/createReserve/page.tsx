@@ -1,9 +1,9 @@
 import {
   Calendar as CalendarIcon,
   Clock,
-  User,
+  // User,
   FileText,
-  CreditCard,
+  // CreditCard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
