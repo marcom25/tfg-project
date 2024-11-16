@@ -16,8 +16,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`flex flex-col bg-gray-100 ${geistSans.variable} ${geistMono.variable} antialiased`}>
+    <html lang="en" className="min-h-screen h-full">
+      <body className={`bg-gradient-to-b from-blue-50 to-white flex flex-col h-full ${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Navbar />
         <main className="flex-grow">{children}</main>
         

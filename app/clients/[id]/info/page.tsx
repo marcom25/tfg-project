@@ -8,7 +8,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { StarIcon, MessageCircleIcon, MailIcon } from "lucide-react";
+import {
+  StarIcon,
+  MessageCircleIcon,
+  MailIcon,
+  MapPinIcon,
+} from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 
 type ClientInfoProps = {
@@ -17,10 +22,10 @@ type ClientInfoProps = {
   }>;
 };
 
-export default async function Page({params} : ClientInfoProps) {
+export default async function Page({ params }: ClientInfoProps) {
   const id = (await params).id;
 
-  console.log(id)
+  console.log(id);
   const comments = [
     {
       id: 1,
@@ -78,6 +83,16 @@ export default async function Page({params} : ClientInfoProps) {
                 <Badge>Branding</Badge>
               </div>
             </div>
+            <div>
+              <h3 className="font-semibold mb-2">Ubicación</h3>
+              <div className="flex items-center mb-2">
+                <MapPinIcon className="w-4 h-4 mr-2" />
+                <span className="text-sm text-gray-600">
+                  Buenos Aires, Argentina
+                </span>
+              </div>
+            </div>
+
             <div>
               <h3 className="font-semibold mb-2">Contacto</h3>
               <div className="flex items-center gap-4">

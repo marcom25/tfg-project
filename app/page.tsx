@@ -75,7 +75,7 @@ export default function Page() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-100">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
@@ -108,7 +108,7 @@ export default function Page() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {cuidadores.map((cuidador) => (
             <Link key={cuidador.id} href={`/providers/${cuidador.id}/info`}>
-              <Card className="overflow-hidden flex flex-col">
+              <Card className="overflow-hidden flex flex-col h-full">
                 <CardContent className="p-4 flex flex-col h-full">
                   <div className="flex flex-col items-center mb-4">
                     <Avatar className="w-24 h-24 mb-2">

@@ -13,6 +13,7 @@ import {
   MessageCircleIcon,
   MailIcon,
   NotepadText,
+  MapPinIcon,
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
@@ -51,18 +52,24 @@ export default async function Page({ params }: ProviderInfoProps) {
   return (
     <div className="max-w-4xl mx-auto p-4">
       <Card className="mb-8">
-        <CardHeader className="flex flex-row items-center gap-4">
-          <Avatar className="w-20 h-20">
-            <AvatarImage src="/placeholder-avatar.jpg" alt="User's avatar" />
-            <AvatarFallback>UN</AvatarFallback>
-          </Avatar>
-          <div>
-            <CardTitle>Usuario Nombre</CardTitle>
-            <CardDescription>Proveedor de servicios</CardDescription>
-            <div className="flex items-center mt-2">
-              <StarIcon className="w-4 h-4 text-yellow-400 mr-1" />
-              <span className="text-sm font-medium">4.8 (120 reseñas)</span>
+        <CardHeader className="flex flex-row justify-between gap-4">
+          <div className="flex flex-row items-center gap-4">
+            <Avatar className="w-20 h-20">
+              <AvatarImage src="/placeholder-avatar.jpg" alt="User's avatar" />
+              <AvatarFallback>UN</AvatarFallback>
+            </Avatar>
+            <div>
+              <CardTitle>Usuario Nombre</CardTitle>
+              <CardDescription>Proveedor de servicios</CardDescription>
+              <div className="flex items-center mt-2">
+                <StarIcon className="w-4 h-4 text-yellow-400 mr-1" />
+                <span className="text-sm font-medium">4.8 (120 reseñas)</span>
+              </div>
             </div>
+          </div>
+          <div>
+            <CardTitle>Experiencia</CardTitle>
+            <CardDescription className="text-end">3 años</CardDescription>
           </div>
         </CardHeader>
         <CardContent>
@@ -85,6 +92,15 @@ export default async function Page({ params }: ProviderInfoProps) {
               </div>
             </div>
             <div>
+              <h3 className="font-semibold mb-2">Ubicación</h3>
+              <div className="flex items-center mb-2">
+                <MapPinIcon className="w-4 h-4 mr-2" />
+                <span className="text-sm text-gray-600">
+                  Buenos Aires, Argentina
+                </span>
+              </div>
+            </div>
+            <div>
               <h3 className="font-semibold mb-2">Contacto</h3>
               <div className="flex items-center gap-4">
                 <Button variant="outline" size="sm">
@@ -97,8 +113,8 @@ export default async function Page({ params }: ProviderInfoProps) {
                 </Button>
                 <Button variant="outline" size="sm">
                   <Link href={`/providers/createReserve`} className="flex">
-                  <NotepadText className="w-4 h-4 mr-2" />
-                  Reservar turno
+                    <NotepadText className="w-4 h-4 mr-2" />
+                    Reservar turno
                   </Link>
                 </Button>
               </div>

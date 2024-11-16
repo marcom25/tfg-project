@@ -19,7 +19,7 @@ export default function Login() {
   // }
 
   return (
-    <div className="flex items-center justify-center min-h-screen ">
+    <div className="flex items-center justify-center h-full ">
       <Card className="w-[350px]">
         <CardHeader>
           <CardTitle component="h3" variant="h3">Iniciar Sesión</CardTitle>

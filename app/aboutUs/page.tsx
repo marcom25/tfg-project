@@ -3,7 +3,7 @@ import { Heart, Shield, Search, Users } from 'lucide-react'
 
 export default function Page() {
   return (
-    <div className="bg-gradient-to-b from-blue-50 to-white min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+    <div className="h-full py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="text-center">
           <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
