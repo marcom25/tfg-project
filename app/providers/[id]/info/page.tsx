@@ -77,23 +77,22 @@ export default async function Page({ params }: ProviderInfoProps) {
             <div>
               <h3 className="font-semibold mb-2">Descripción</h3>
               <p className="text-sm text-gray-600">
-                Soy un profesional con experiencia en diseño gráfico y
-                desarrollo web. Me especializo en crear soluciones visuales
-                atractivas y funcionales para mis clientes.
+                Soy una niñera profesional con experiencia en el cuidado y
+                desarrollo infantil. Me especializo en proporcionar un entorno
+                seguro, cariñoso y estimulante para los niños, adaptándome a las
+                necesidades específicas de cada familia.
               </p>
             </div>
             <div>
               <h3 className="font-semibold mb-2">Habilidades</h3>
               <div className="flex flex-wrap gap-2">
-                <Badge>Diseño Gráfico</Badge>
-                <Badge>Desarrollo Web</Badge>
-                <Badge>UI/UX</Badge>
-                <Badge>Branding</Badge>
+                <Badge>Niñera</Badge>
+                <Badge>Primeros auxilios</Badge>
               </div>
             </div>
             <div>
               <h3 className="font-semibold mb-2">Ubicación</h3>
-              <div className="flex items-center mb-2">
+              <div className="flex items-center">
                 <MapPinIcon className="w-4 h-4 mr-2" />
                 <span className="text-sm text-gray-600">
                   Buenos Aires, Argentina

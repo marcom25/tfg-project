@@ -69,23 +69,22 @@ export default async function Page({ params }: ClientInfoProps) {
             <div>
               <h3 className="font-semibold mb-2">Descripción</h3>
               <p className="text-sm text-gray-600">
-                Soy un profesional con experiencia en diseño gráfico y
-                desarrollo web. Me especializo en crear soluciones visuales
-                atractivas y funcionales para mis clientes.
+                Soy un cliente en busca de una niñera responsable y confiable.
+                Estoy interesado en alguien que pueda brindar un cuidado atento
+                y de calidad a mis hijos, asegurando su bienestar y ayudándolos
+                a desarrollarse en un ambiente seguro y estimulante.
               </p>
             </div>
             <div>
-              <h3 className="font-semibold mb-2">Habilidades</h3>
+              <h3 className="font-semibold mb-2">Servicios que busca</h3>
               <div className="flex flex-wrap gap-2">
-                <Badge>Diseño Gráfico</Badge>
-                <Badge>Desarrollo Web</Badge>
-                <Badge>UI/UX</Badge>
-                <Badge>Branding</Badge>
+                <Badge>Niñera</Badge>
+                <Badge>Primeros auxilios</Badge>
               </div>
             </div>
             <div>
               <h3 className="font-semibold mb-2">Ubicación</h3>
-              <div className="flex items-center mb-2">
+              <div className="flex items-center">
                 <MapPinIcon className="w-4 h-4 mr-2" />
                 <span className="text-sm text-gray-600">
                   Buenos Aires, Argentina

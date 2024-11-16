@@ -10,10 +10,10 @@ export default function Page() {
   const cuidadores = [
     {
       id: 1,
-      name: "Agostina Heinzmann",
+      name: "Agostina Gomez",
       rating: 4.8,
       location: "Buenos Aires",
-      specialties: ["Bestie", "🧚🧚🧚🧚"],
+      specialties: ["Niñera", "Primeros auxilios"],
       image: "/placeholder.svg?height=150&width=150",
     },
     {

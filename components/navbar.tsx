@@ -29,12 +29,12 @@ export default function Navbar() {
           <Button variant="ghost">
             <Link href="/chat">Chat</Link>
           </Button>
-          {/* <Button>
-            <Link></Link>
+          {/* <Button variant="ghost">
+            <Link href="/">Buscar Clientes</Link>
           </Button> */}
         </nav>
         <nav className="flex gap-1">
-          {false ? (
+          {true ? (
             <>
               <Button variant="ghost">
                 <Link href="/login">Iniciar sesión</Link>
