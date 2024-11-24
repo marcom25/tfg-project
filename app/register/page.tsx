@@ -1,85 +1,96 @@
+"use client";
 
-// import { useState } from 'react'
-// import { useRouter } from 'next/navigation'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
-import Link from 'next/link'
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import Link from "next/link";
+import { useFormState } from "react-dom";
+import { register } from "@/actions/auth";
+import { FormEvent, useActionState, useState } from "react";
 
 export default function Register() {
-  // const [email, setEmail] = useState('')
-  // const [password, setPassword] = useState('')
-  // const [userType, setUserType] = useState('')
-  // const router = useRouter()
-
-  // const handleSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault()
-  //   // Aquí iría la lógica de registro
-  //   console.log('Register attempt', { email, password, userType })
-  //   // Redirigir al usuario a la página de inicio después del registro
-  //   router.push('/home')
-  // }
+  const [state, formAction] = useActionState(register, {
+    message: "",
+    errors: {},
+  });
+  const [userType, setUserType] = useState<'client' | 'provider' | null>(null)
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <Card className="w-[350px]">
-        <CardHeader>
-          <CardTitle component="h3" variant="h3">Registro</CardTitle>
-          <CardDescription component="h4" variant="h4">Crea tu cuenta en Care Connect</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form 
-          // onSubmit={handleSubmit}
-          >
+    <form action={formAction}>
+      <div className="flex items-center justify-center min-h-screen">
+        <Card className="w-[350px]">
+          <CardHeader>
+            <CardTitle>Registro</CardTitle>
+            <CardDescription>Crea tu cuenta en Care Connect</CardDescription>
+          </CardHeader>
+          <CardContent>
             <div className="grid w-full items-center gap-4">
               <div className="flex flex-col space-y-1.5">
-                <Input 
-                  id="email" 
-                  placeholder="Email" 
+                <Input
+                  id="email"
+                  placeholder="Email"
                   type="email"
-                  // value={email}
-                  // onChange={(e) => setEmail(e.target.value)}
+                  name="email"
                   required
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
-                <Input 
-                  id="password" 
-                  placeholder="Contraseña" 
+                <Input
+                  id="password"
+                  placeholder="Contraseña"
                   type="password"
-                  // value={password}
-                  // onChange={(e) => setPassword(e.target.value)}
+                  name="password"
                   required
                 />
               </div>
+              <Input
+                type="hidden"
+                name="userType"
+                value={userType || ''}
+              />
               <div className="flex flex-col space-y-1.5">
-                <Button 
-                  type="button" 
-                  variant={true ? 'default' : 'outline'}
-                  // onClick={() => setUserType('client')}
+                <Button
+                  type="button"
+                  variant={userType === "client" ? "default" : "outline"}
                   className="w-full"
+                  onClick={() => setUserType('client')}
                 >
                   Necesito un servicio
                 </Button>
-                <Button 
-                  type="button" 
-                  variant={false ? 'default' : 'outline'}
-                  // onClick={() => setUserType('provider')}
+                <Button
+                  type="button"
+                  variant={userType === "provider" ? "default" : "outline"}
                   className="w-full"
+                  onClick={() => setUserType('provider')}
                 >
                   Quiero prestar un servicio
                 </Button>
               </div>
             </div>
-          </form>
-        </CardContent>
-        <CardFooter className="flex flex-col">
-          <Button className="w-full" type="submit">Registrarse</Button>
-          <p className="mt-4 text-sm text-center">
-            ¿Ya tienes una cuenta? <Link href="/login" className="text-blue-500 hover:underline">Inicia sesión</Link>
-          </p>
-        </CardFooter>
-      </Card>
-    </div>
+          </CardContent>
+          <CardFooter className="flex flex-col">
+            <Button className="w-full" type="submit">
+              Registrarse
+            </Button>
+            {state.message && (
+              <p className="mt-2 text-sm text-red-500">{state.message}</p>
+            )}
+            <p className="mt-4 text-sm text-center">
+              ¿Ya tienes una cuenta?{" "}
+              <Link href="/login" className="text-blue-500 hover:underline">
+                Inicia sesión
+              </Link>
+            </p>
+          </CardFooter>
+        </Card>
+      </div>
+    </form>
   )
 }

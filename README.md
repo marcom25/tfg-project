@@ -26,3 +26,7 @@ Y listo, podra ver la aplicación en funcionamiento en su [localhost:3000](http:
 
 ## Demo En Vivo
 Si no quiere instalar el proyecto, puede verlo funcionando [aquí](https://tfg-project.vercel.app/)
+
+### Credenciales
+Usuario cliente: client@gmail.com Client1!
+Usuario proveedor: provider@gmail.com Provider1!
