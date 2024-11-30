@@ -1,14 +1,11 @@
 "use server";
 import connectionPool from "@/db";
-import {
-  LoginFormSchema,
-  LoginFormState,
-  RegisterFormSchema,
-  RegisterFormState,
-} from "./../lib/schemas";
+import { RegisterFormSchema, RegisterFormState } from "./../lib/schemas";
 import * as argon2 from "argon2";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { auth, signIn, signOut } from "@/auth";
+import { AuthError } from "next-auth";
 
 const createUserQuery = `
     INSERT INTO usuario(email, contrasena, ultimo_ingreso)
@@ -57,8 +54,6 @@ export async function register(state: RegisterFormState, formData: FormData) {
       date,
     ]);
 
-    console.log(newUser, "newUser");
-
     if (userType === "client") {
       await connectionPool.query(assignRoleQuery, [newUser.usuario_id, 1]);
       await connectionPool.query(createClientUserQuery, [newUser.usuario_id]);
@@ -76,35 +71,30 @@ export async function register(state: RegisterFormState, formData: FormData) {
   redirect("/login");
 }
 
-export async function login(state: LoginFormState, formData: FormData) {
-  const validatedFields = LoginFormSchema.safeParse({
-    email: formData.get("email"),
-    password: formData.get("password"),
-  });
-
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: "Faltan campos. Fallo al inciar sesión",
-    };
+export async function authenticate(
+  prevState: string | undefined,
+  formData: FormData
+) {
+  try {   
+    const session = await auth()
+    await signIn("credentials", formData);
+    console.log(session);
+    
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case "CredentialsSignin":
+          return "Credenciales inválidas.";
+        default:
+          return "Algo salió mal.";
+      }
+    }
+    throw error;
   }
+}
 
-  const { email, password } = validatedFields.data;
-
-  const [date] = new Date().toISOString().split("T");
-
-  //   try {
-  //     const userData = await connectionPool.query(`
-  //             SELECT u.usuario_id FROM usuario u WHERE u.email = ${email} AND u.password = ${password}
-  //         `);
-
-  //     await connectionPool.query(`
-  //             INSERT INTO usuario (usuario_id, ultimo_ingreso)
-  //             VALUES(${userData.}${date})
-  //         `);
-  //   } catch (error) {
-  //     return {
-  //       message: "Database Error: No se pudo recuperar el usuario",
-  //     };
-  //   }
+export async function logout() {
+  await signOut({
+    redirectTo: "/login"
+  })
 }
