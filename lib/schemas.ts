@@ -49,39 +49,37 @@ export type RegisterFormState = {
 };
 
 export const UserProfileFormSchema = z.object({
-  nombre: z.string().min(1, "El nombre es requerido").trim(),
-  apellido: z.string().min(1, "El apellido es requerido").trim(),
-  telefono: z
+  name: z.string().min(1, "El nombre es requerido").trim(),
+  lastname: z.string().min(1, "El apellido es requerido").trim(),
+  phone: z
     .string()
     .min(10, "El teléfono debe tener al menos 10 dígitos")
     .trim(),
-  experiencia: z.string().nullable(),
-  servicios: z.string().min(1, "Debe seleccionar al menos un servicio").trim(),
-  sobreMi: z
+  experience: z.string().nullable(),
+  services: z.string().min(1, "Debe seleccionar al menos un servicio").trim(),
+  aboutMe: z
     .string()
     .max(500, "La descripción no puede exceder los 500 caracteres")
     .trim(),
-  fotoPerfil: z.string().min(1, "Debe seleccionar un color para el avatar"),
-  direccion: z.object({
-    calle: z.string().min(1, "La dirección es requerida").trim(),
-    ciudad: z.string().min(1, "La ciudad es requerida").trim(),
-    provincia: z.string().min(1, "La provincia es requerida").trim(),
+  address: z.object({
+    street: z.string().min(1, "La dirección es requerida").trim(),
+    city: z.string().min(1, "La ciudad es requerida").trim(),
+    province: z.string().min(1, "La provincia es requerida").trim(),
   }),
 });
 
 export type UserProfileFormState = {
   errors?: {
-    nombre?: string;
-    apellido?: string;
-    telefono?: string;
-    experiencia?: string | null;
-    servicios?: Array<{ nombre_servicio?: string }> | null;
-    sobreMi?: string;
-    fotoPerfil?: string;
-    direccion?: {
-      calle?: string;
-      ciudad?: string;
-      provincia?: string;
+    name?: string;
+    lastname?: string;
+    phone?: string;
+    experience?: string | null;
+    services?: Array<{ serviceName?: string }> | null;
+    aboutMe?: string;
+    address?: {
+      street?: string;
+      city?: string;
+      province?: string;
     };
   };
   message?: string | null;

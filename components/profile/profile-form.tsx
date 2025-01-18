@@ -13,48 +13,25 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { ColorSelector } from "./color-selector";
 import AddressFormFields from "./address-form";
 import { updateProfile } from "@/actions/profile";
 import { useActionState } from "react";
 import { UserProfileFormState } from "@/lib/schemas";
-
-type UserData = {
-  nombre: string;
-  apellido: string;
-  telefono: string;
-  experiencia: string | null;
-  servicios: Array<{ nombre_servicio: string }> | null;
-  sobreMi: string;
-  fotoPerfil: string;
-  direccion: {
-    calle: string;
-    ciudad: string;
-    provincia: string;
-  };
-};
-
-type Province = {
-  provinceid: number;
-  provincename: string;
-  cities: Array<{ cityid: number; cityname: string }>;
-};
+import { Province, UserProfile } from "@/lib/data";
 
 type ProfileFormProps = {
-  userData: UserData;
+  userData: UserProfile;
   provincesAndCities: Province[];
 };
-
-const initialState: UserProfileFormState = {
-  errors: {},
-  message: "",
-}
 
 export default function ProfileForm({
   userData,
   provincesAndCities,
 }: ProfileFormProps) {
-  const [errorMessage, formAction, isPending] = useActionState(updateProfile, initialState);
+  // const [errorMessage, formAction, isPending] = useActionState(updateProfile, {
+  //   message: "",
+  //   errors: {},
+  // });
 
   return (
     <Card className="w-full max-w-4xl mx-auto">
@@ -64,27 +41,26 @@ export default function ProfileForm({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form action={formAction} className="space-y-4">
+        <form action={""} className="space-y-4">
           <div className="flex flex-col items-center mb-6 space-y-4">
-            <Avatar className={`w-24 h-24 ${userData.fotoPerfil}`}>
+            <Avatar className={`w-24 h-24`}>
               <AvatarFallback className="font-bold text-2xl">
-                {userData.nombre?.[0]}
-                {userData.apellido?.[0]}
+                {userData.name?.[0]}
+                {userData.lastname?.[0]}
               </AvatarFallback>
             </Avatar>
-            <ColorSelector initialColor={userData.fotoPerfil} />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="nombre">Nombre</Label>
-              <Input id="nombre" name="nombre" defaultValue={userData.nombre} />
+              <Input id="nombre" name="nombre" defaultValue={userData.name} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="apellido">Apellido</Label>
               <Input
                 id="apellido"
                 name="apellido"
-                defaultValue={userData.apellido}
+                defaultValue={userData.lastname}
               />
             </div>
             <div className="space-y-2">
@@ -92,22 +68,24 @@ export default function ProfileForm({
               <Input
                 id="telefono"
                 name="telefono"
-                defaultValue={userData.telefono}
+                defaultValue={userData.phone}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="experiencia">Experiencia</Label>
-              <Input
-                id="experiencia"
-                name="experiencia"
-                defaultValue={userData.experiencia ?? ""}
-              />
-            </div>
+            {userData.experience ?? (
+              <div className="space-y-2">
+                <Label htmlFor="experiencia">Experiencia</Label>
+                <Input
+                  id="experiencia"
+                  name="experiencia"
+                  defaultValue={userData.experience ?? ""}
+                />
+              </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="servicios">Servicios</Label>
               <Select
                 name="servicios"
-                defaultValue={userData.servicios?.[0]?.nombre_servicio}
+                defaultValue={userData.services?.[0]?.service_name}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecciona un servicio" />
@@ -127,9 +105,9 @@ export default function ProfileForm({
             </div>
             <AddressFormFields
               provincesAndCities={provincesAndCities}
-              initialAddress={userData.direccion.calle}
-              initialCity={userData.direccion.ciudad}
-              initialProvince={userData.direccion.provincia}
+              initialAddress={userData.address.city}
+              initialCity={userData.address.street}
+              initialProvince={userData.address.province}
             />
           </div>
           <div className="space-y-2">
@@ -137,7 +115,7 @@ export default function ProfileForm({
             <Textarea
               id="sobreMi"
               name="sobreMi"
-              defaultValue={userData.sobreMi}
+              defaultValue={userData.aboutMe}
               rows={4}
             />
           </div>

@@ -76,9 +76,9 @@ export async function authenticate(
   formData: FormData
 ) {
   try {   
-    const session = await auth()
+   
     await signIn("credentials", formData);
-    console.log(session);
+   
     
   } catch (error) {
     if (error instanceof AuthError) {

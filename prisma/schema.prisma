@@ -1,0 +1,182 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ciudad {
+  ciudad_id    Int         @id @default(autoincrement())
+  nombre       String      @db.VarChar(100)
+  provincia_id Int?
+  provincia    provincia?  @relation(fields: [provincia_id], references: [provincia_id], onDelete: Cascade, onUpdate: NoAction)
+  direccion    direccion[]
+}
+
+model cliente {
+  cliente_id         Int        @id @default(autoincrement())
+  usuario_id         Int?
+  rango_monetario_id Int?
+  usuario            usuario?   @relation(fields: [usuario_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
+  contrato           contrato[]
+  servicio           servicio[]
+}
+
+model comentario {
+  comentario_id                                     Int       @id @default(autoincrement())
+  usuario_comentador_id                             Int?
+  usuario_comentado_id                              Int?
+  comentario                                        String
+  fecha_comentario                                  DateTime? @default(now()) @db.Timestamp(6)
+  usuario_comentario_usuario_comentado_idTousuario  usuario?  @relation("comentario_usuario_comentado_idTousuario", fields: [usuario_comentado_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
+  usuario_comentario_usuario_comentador_idTousuario usuario?  @relation("comentario_usuario_comentador_idTousuario", fields: [usuario_comentador_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model contrato {
+  contrato_id        Int        @id @default(autoincrement())
+  cliente_id         Int?
+  proveedor_id       Int?
+  fecha_inicio       DateTime   @db.Timestamp(6)
+  fecha_fin          DateTime   @db.Timestamp(6)
+  cantidad_horas     Int
+  monto_acordado     Decimal    @db.Decimal(10, 2)
+  fecha_creacion     DateTime?  @default(now()) @db.Timestamp(6)
+  servicio_id        Int?
+  estado_contrato_id Int?
+  decision_cliente   String?
+  decision_proveedor String?
+  cliente            cliente?   @relation(fields: [cliente_id], references: [cliente_id], onDelete: Cascade, onUpdate: NoAction)
+  estado             estado?    @relation(fields: [estado_contrato_id], references: [estado_id], onUpdate: NoAction)
+  proveedor          proveedor? @relation(fields: [proveedor_id], references: [proveedor_id], onDelete: Cascade, onUpdate: NoAction)
+  servicio           servicio?  @relation(fields: [servicio_id], references: [servicio_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model conversacion {
+  conversacion_id                                    Int       @id @default(autoincrement())
+  usuario_receptor_id                                Int?
+  usuario_remitente_id                               Int?
+  fecha_creacion                                     DateTime? @default(now()) @db.Timestamp(6)
+  usuario_conversacion_usuario_receptor_idTousuario  usuario?  @relation("conversacion_usuario_receptor_idTousuario", fields: [usuario_receptor_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
+  usuario_conversacion_usuario_remitente_idTousuario usuario?  @relation("conversacion_usuario_remitente_idTousuario", fields: [usuario_remitente_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
+  mensaje                                            mensaje[]
+}
+
+model direccion {
+  direccion_id Int       @id @default(autoincrement())
+  nombre       String?   @db.VarChar(100)
+  calle        String?   @db.VarChar(100)
+  numero       String?   @db.VarChar(20)
+  ciudad_id    Int?
+  ciudad       ciudad?   @relation(fields: [ciudad_id], references: [ciudad_id], onDelete: Cascade, onUpdate: NoAction)
+  usuario      usuario[]
+}
+
+model estado {
+  estado_id Int        @id @default(autoincrement())
+  estado    String     @db.VarChar(50)
+  contrato  contrato[]
+}
+
+model mensaje {
+  mensaje_id      Int           @id @default(autoincrement())
+  remitente_id    Int?
+  conversacion_id Int?
+  mensaje         String
+  fecha_creacion  DateTime?     @default(now()) @db.Timestamp(6)
+  conversacion    conversacion? @relation(fields: [conversacion_id], references: [conversacion_id], onDelete: Cascade, onUpdate: NoAction)
+  usuario         usuario?      @relation(fields: [remitente_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model proveedor {
+  proveedor_id       Int        @id @default(autoincrement())
+  usuario_id         Int?
+  experiencia        String?
+  rango_monetario_id Int?
+  contrato           contrato[]
+  usuario            usuario?   @relation(fields: [usuario_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
+  servicio           servicio[]
+}
+
+model provincia {
+  provincia_id Int      @id @default(autoincrement())
+  nombre       String   @db.VarChar(100)
+  ciudad       ciudad[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model puntuacion {
+  puntuacion_id                                      Int       @id @default(autoincrement())
+  usuario_calificado_id                              Int?
+  usuario_calificador_id                             Int?
+  puntuacion                                         Int?
+  fecha_puntuacion                                   DateTime? @default(now()) @db.Timestamp(6)
+  usuario_puntuacion_usuario_calificado_idTousuario  usuario?  @relation("puntuacion_usuario_calificado_idTousuario", fields: [usuario_calificado_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
+  usuario_puntuacion_usuario_calificador_idTousuario usuario?  @relation("puntuacion_usuario_calificador_idTousuario", fields: [usuario_calificador_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model rango_monetario {
+  rango_monetario_id Int      @id @default(autoincrement())
+  minimo             Decimal? @db.Decimal(10, 2)
+  maximo             Decimal? @db.Decimal(10, 2)
+}
+
+model rol {
+  rol_id      Int           @id @default(autoincrement())
+  nombre_rol  String        @db.VarChar(50)
+  rol_usuario rol_usuario[]
+}
+
+model rol_usuario {
+  usuario_id Int
+  rol_id     Int
+  rol        rol     @relation(fields: [rol_id], references: [rol_id], onDelete: Cascade, onUpdate: NoAction)
+  usuario    usuario @relation(fields: [usuario_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([usuario_id, rol_id])
+}
+
+model servicio {
+  servicio_id     Int        @id @default(autoincrement())
+  proveedor_id    Int?
+  cliente_id      Int?
+  nombre_servicio String     @db.VarChar(100)
+  contrato        contrato[]
+  cliente         cliente?   @relation(fields: [cliente_id], references: [cliente_id], onDelete: Cascade, onUpdate: NoAction)
+  proveedor       proveedor? @relation(fields: [proveedor_id], references: [proveedor_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model spatial_ref_sys {
+  srid      Int     @id
+  auth_name String? @db.VarChar(256)
+  auth_srid Int?
+  srtext    String? @db.VarChar(2048)
+  proj4text String? @db.VarChar(2048)
+}
+
+model usuario {
+  usuario_id                                              Int            @id @default(autoincrement())
+  nombre                                                  String?        @db.VarChar(100)
+  apellido                                                String?        @db.VarChar(100)
+  descripcion                                             String?
+  direccion_id                                            Int?
+  email                                                   String         @unique @db.VarChar(150)
+  contrasena                                              String         @db.VarChar(255)
+  telefono                                                String?        @db.VarChar(20)
+  imagen_perfil_id                                        Int?
+  ultimo_ingreso                                          DateTime?      @db.Timestamp(6)
+  fecha_registro                                          DateTime?      @default(now()) @db.Timestamp(6)
+  cliente                                                 cliente[]
+  comentario_comentario_usuario_comentado_idTousuario     comentario[]   @relation("comentario_usuario_comentado_idTousuario")
+  comentario_comentario_usuario_comentador_idTousuario    comentario[]   @relation("comentario_usuario_comentador_idTousuario")
+  conversacion_conversacion_usuario_receptor_idTousuario  conversacion[] @relation("conversacion_usuario_receptor_idTousuario")
+  conversacion_conversacion_usuario_remitente_idTousuario conversacion[] @relation("conversacion_usuario_remitente_idTousuario")
+  mensaje                                                 mensaje[]
+  proveedor                                               proveedor[]
+  puntuacion_puntuacion_usuario_calificado_idTousuario    puntuacion[]   @relation("puntuacion_usuario_calificado_idTousuario")
+  puntuacion_puntuacion_usuario_calificador_idTousuario   puntuacion[]   @relation("puntuacion_usuario_calificador_idTousuario")
+  rol_usuario                                             rol_usuario[]
+  direccion                                               direccion?     @relation(fields: [direccion_id], references: [direccion_id], onUpdate: NoAction)
+}

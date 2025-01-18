@@ -2,9 +2,9 @@ import { auth } from "@/auth";
 import connectionPool from "@/db";
 
 type City = {
-  cityid: number,
-  cityname: string
-}
+  cityid: number;
+  cityname: string;
+};
 
 export type Province = {
   provinceid: number;
@@ -21,7 +21,7 @@ export async function fetchProvincesAndCities(): Promise<Province[]> {
     const data = await connectionPool.query(query);
     const provincies = data.rows.reduce((acc, item) => {
       const provinceIndex = acc.findIndex(
-        (prov: { provinceid: any; }) => prov.provinceid === item.provinceid
+        (prov: { provinceid: any }) => prov.provinceid === item.provinceid
       );
 
       if (provinceIndex !== -1) {
@@ -42,68 +42,104 @@ export async function fetchProvincesAndCities(): Promise<Province[]> {
       return acc;
     }, []);
 
-    return provincies
+    return provincies;
   } catch (error) {
     throw new Error("Error al buscar las provincias con las ciudades.");
   }
 }
 
 export type UserProfile = {
-  nombre: string;
-  apellido: string;
-  telefono: string;
-  experiencia: string | null;
-  servicios: Array<{
-    servicio_id: number;
-    nombre_servicio: string;
+  name: string;
+  lastname: string;
+  phone: string;
+  experience: string | null;
+  services: Array<{
+    service_id: number;
+    service_name: string;
   }> | null;
-  sobreMi: string;
-  fotoPerfil: string;
-  direccion: {
-    calle: string;
-    ciudad: string;
-    provincia: string;
+  aboutMe: string;
+  address: {
+    street: string;
+    city: string;
+    province: string;
   };
 };
 
 export async function fetchUserData(): Promise<UserProfile> {
   const session = await auth();
-  const query = `SELECT * FROM obtener_usuario_con_datos($1);`;
+  console.log(session);
+  
+  const queryClient = `SELECT 
+    u.nombre, 
+    u.apellido, 
+    u.descripcion, 
+    u.email, 
+    u.telefono, 
+    d.calle, 
+    d.numero,
+    c.nombre,
+    p.nombre,
+    s.nombre_servicio,
+  FROM usuario u 
+  JOIN direccion d ON u.direccion_id = d.direccion_id 
+  JOIN ciudad c ON d.ciudad_id = c.ciudad_id 
+  JOIN provincia p ON c.provincia_id = p.provincia_id
+  JOIN cliente c2 ON c2.usuario_id = u.usuario_id 
+  JOIN servicio s ON s.cliente_id = c2.cliente_id 
+  WHERE u.usuario_id = ($1)`;
+
+  const queryProvider = `SELECT 
+    u.nombre, 
+    u.apellido, 
+    u.descripcion, 
+    u.email, 
+    u.telefono, 
+    d.calle, 
+    d.numero,
+    c.nombre,
+    p.nombre,
+    s.nombre_servicio
+  FROM usuario u 
+  JOIN direccion d ON u.direccion_id = d.direccion_id 
+  JOIN ciudad c ON d.ciudad_id = c.ciudad_id 
+  JOIN provincia p ON c.provincia_id = p.provincia_id
+  JOIN proveedor p2 ON p2.usuario_id = u.usuario_id 
+  JOIN servicio s ON s.proveedor_id = p2.proveedor_id 
+  WHERE u.usuario_id = ($1)`;
   const userId = session?.user.id;
-
+  console.log(userId, "USER ID");
+  
   try {
-    const data = await connectionPool.query(query, [userId]);
+    // const data = await connectionPool.query(query, [userId]);
 
-    if (data.rows.length) {
-      const row = data.rows[0];
-      return {
-        nombre: row.nombre || "",
-        apellido: row.apellido || "",
-        telefono: row.telefono || "",
-        experiencia: row.experiencia || null,
-        servicios: row.servicios ? JSON.parse(row.servicios) : null,
-        sobreMi: row.sobre_mi || "",
-        fotoPerfil: row.foto_perfil || "",
-        direccion: {
-          calle: row.direccion_calle || "",
-          ciudad: row.ciudad || "",
-          provincia: row.provincia || "",
-        },
-      };
-    }
+    // if (data.rows.length) {
+    //   const row = data.rows[0];
+    //   return {
+    //     name: row.nombre || "",
+    //     lastname: row.apellido || "",
+    //     phone: row.telefono || "",
+    //     experience: row.experiencia || null,
+    //     services: row.servicios ? JSON.parse(row.servicios) : null,
+    //     aboutMe: row.sobre_mi || "",
+    //     address: {
+    //       street: row.direccion_calle || "",
+    //       city: row.ciudad || "",
+    //       province: row.provincia || "",
+    //     },
+    //   };
+    // }
 
     return {
-      nombre: "",
-      apellido: "",
-      telefono: "",
-      experiencia: null,
-      servicios: null,
-      sobreMi: "",
-      fotoPerfil: "",
-      direccion: {
-        calle: "",
-        ciudad: "",
-        provincia: "",
+      name: "",
+      lastname: "",
+      phone: "",
+      experience: null,
+      services: null,
+      aboutMe: "",
+      address: {
+        street: "",
+        city: "",
+        province: "",
       },
     };
   } catch (error) {

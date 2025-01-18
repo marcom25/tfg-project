@@ -59,10 +59,13 @@ export const { auth, signIn, signOut } = NextAuth({
           if (!user) return null;
           const passwordsMatch = await argon2.verify(user.password, password);
           if (passwordsMatch) {
-            const { password: _, ...userWithoutPassword } = user;
-            console.log(userWithoutPassword);
-            
-            return userWithoutPassword;
+            const { password: _, email, id, name, role } = user;
+            return {
+              id,
+              name,
+              email,
+              role
+            }
           }
         }
         console.log("CREDENCIALES INVALIDAS");

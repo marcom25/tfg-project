@@ -8,19 +8,18 @@ export async function updateProfile({
 }: {
   state: UserProfileFormState;
   formData: FormData;
-}) {
+}) { 
   const validatedFields = UserProfileFormSchema.safeParse({
-    nombre: formData.get("nombre"),
-    apellido: formData.get("apellido"),
-    telefono: formData.get("telefono"),
-    experiencia: formData.get("experiencia"),
-    servicios: formData.get("servicios"),
-    sobreMi: formData.get("sobreMi"),
-    fotoPerfil: formData.get("fotoPerfil"),
-    direccion: {
-      calle: formData.get("address"),
-      ciudad: formData.get("city"),
-      provincia: formData.get("province"),
+    name: formData.get("name"),
+    lastname: formData.get("lastname"),
+    phone: formData.get("phone"),
+    experience: formData.get("experience"),
+    services: formData.get("services"),
+    aboutMe: formData.get("aboutMe"),
+    address: {
+      street: formData.get("address"),
+      city: formData.get("city"),
+      province: formData.get("province"),
     },
   });
 

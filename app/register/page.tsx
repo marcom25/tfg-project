@@ -11,9 +11,8 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import Link from "next/link";
-import { useFormState } from "react-dom";
 import { register } from "@/actions/auth";
-import { FormEvent, useActionState, useState } from "react";
+import {  useActionState, useState } from "react";
 
 export default function Register() {
   const [state, formAction] = useActionState(register, {
