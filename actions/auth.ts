@@ -37,30 +37,15 @@ export async function register(state: RegisterFormState, formData: FormData) {
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
-      message: "Faltan campos. Fallo al registrar usuario",
+      message: "Validation error",
     };
   }
 
   const { email, password, userType } = validatedFields.data;
-  const [date] = new Date().toISOString().split("T");
   const hashedPassword = await argon2.hash(password);
 
   try {
-    const {
-      rows: [newUser],
-    } = await connectionPool.query(createUserQuery, [
-      email,
-      hashedPassword,
-      date,
-    ]);
-
-    if (userType === "client") {
-      await connectionPool.query(assignRoleQuery, [newUser.usuario_id, 1]);
-      await connectionPool.query(createClientUserQuery, [newUser.usuario_id]);
-    } else {
-      await connectionPool.query(assignRoleQuery, [newUser.usuario_id, 2]);
-      await connectionPool.query(createProviderUserQuery, [newUser.usuario_id]);
-    }
+    
   } catch (error) {
     return {
       message: "Error al registrar el usuario.",

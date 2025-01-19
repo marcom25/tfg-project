@@ -34,6 +34,7 @@ const CardTitle = React.forwardRef<HTMLElement, TypographyProps>(
   ({ className, ...props }, ref) => (
     <Typography
       ref={ref}
+      variant="h3"
       className={cn("font-semibold leading-none tracking-tight", className)}
       {...props}
     />

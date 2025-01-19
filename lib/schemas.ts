@@ -23,19 +23,19 @@ export type LoginFormState = {
 };
 
 export const RegisterFormSchema = z.object({
-  email: z.string().email({ message: "Ingrese un email válido" }).trim(),
+  email: z.string().email({ message: "Por favor ingresá un email válido." }).trim(),
   password: z
     .string()
-    .min(6, { message: "Debe contener al menos 6 caracteres." })
-    .regex(/[a-z]/, { message: "Debe contener al menos una letra minúscula." })
-    .regex(/[A-Z]/, { message: "Debe contener al menos una letra mayúscula." })
-    .regex(/[0-9]/, { message: "Debe contener al menos un número." })
+    .min(6, { message: "La contraseña debe contener al menos 6 caracteres." })
+    .regex(/[a-z]/, { message: "La contraseña debe contener al menos una letra minúscula." })
+    .regex(/[A-Z]/, { message: "La contraseña debe contener al menos una letra mayúscula." })
+    .regex(/[0-9]/, { message: "La contraseña debe contener al menos un número." })
     .regex(/[^a-zA-Z0-9]/, {
-      message: "Debe contener al menos un carácter especial.",
+      message: "La contraseña debe contener al menos un carácter especial.",
     })
     .trim(),
   userType: z.enum(["client", "provider"], {
-    message: "Debe ser 'cliente' o 'proveedor'.",
+    message: "Por favor selecciona un tipo de usuario.",
   }),
 });
 
