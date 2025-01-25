@@ -25,7 +25,7 @@ type ClientInfoProps = {
 export default async function Page({ params }: ClientInfoProps) {
   const id = (await params).id;
 
-  console.log(id);
+
   const comments = [
     {
       id: 1,

@@ -27,7 +27,7 @@ type ProviderInfoProps = {
 export default async function Page({ params }: ProviderInfoProps) {
   const id = (await params).id;
 
-  console.log(id);
+
   const comments = [
     {
       id: 1,

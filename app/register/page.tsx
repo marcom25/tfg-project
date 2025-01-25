@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -12,10 +11,9 @@ import {
 } from "@/components/ui/card";
 import Link from "next/link";
 import { register } from "@/actions/auth";
-import { useActionState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
+
 import {
   Form,
   FormControl,
@@ -23,31 +21,38 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { RegisterFormSchema } from "@/lib/schemas";
+import { RegisterFormSchema, RegisterFormSchemaType } from "@/lib/schemas";
+import { useState } from "react";
+import { LoadingButton } from "@/components/ui/loading-button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Error } from "@/lib/definitions";
+import { AlertCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+
 
 export default function Register() {
-  const [state, formAction] = useActionState(register, {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error>({
+    error: false,
     message: "",
-    errors: {},
   });
-
-  const form = useForm<z.infer<typeof RegisterFormSchema>>({
+  const form = useForm<RegisterFormSchemaType>({
     resolver: zodResolver(RegisterFormSchema),
     defaultValues: {
       email: "",
       password: "",
+      repeatPassword: "",
       userType: undefined,
     },
   });
-
-  function onSubmit(values: z.infer<typeof RegisterFormSchema>) {
-    const formData = new FormData();
-    Object.entries(values).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
-    formAction(formData);
+  const router = useRouter();
+  async function onSubmit(data: RegisterFormSchemaType) {
+    setLoading(true);
+    const response = await register(data);
+    if (response?.error) {
+      setError(response);
+    }
+    router.refresh()
   }
 
   return (
@@ -79,7 +84,27 @@ export default function Register() {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input placeholder="Contraseña" type="password" {...field} />
+                        <Input
+                          placeholder="Contraseña"
+                          type="password"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="repeatPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          placeholder="Repetir Contraseña"
+                          type="password"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -94,7 +119,9 @@ export default function Register() {
                         <div className="flex flex-col space-y-1.5">
                           <Button
                             type="button"
-                            variant={field.value === "client" ? "default" : "outline"}
+                            variant={
+                              field.value === "client" ? "default" : "outline"
+                            }
                             className="w-full"
                             onClick={() => form.setValue("userType", "client")}
                           >
@@ -102,9 +129,13 @@ export default function Register() {
                           </Button>
                           <Button
                             type="button"
-                            variant={field.value === "provider" ? "default" : "outline"}
+                            variant={
+                              field.value === "provider" ? "default" : "outline"
+                            }
                             className="w-full"
-                            onClick={() => form.setValue("userType", "provider")}
+                            onClick={() =>
+                              form.setValue("userType", "provider")
+                            }
                           >
                             Quiero prestar un servicio
                           </Button>
@@ -117,10 +148,22 @@ export default function Register() {
               </div>
             </CardContent>
             <CardFooter className="flex flex-col">
-              <Button className="w-full" type="submit">
-                Registrarse
-              </Button>
-              {state.message && <p className="mt-2 text-sm text-red-500">{state.message}</p>}
+              <LoadingButton
+                isLoading={loading}
+                labelButton="Registrarse"
+                loadingLabel="Procesando..."
+                className="w-full"
+                type="submit"
+              />
+              {error?.error && (
+                <Alert variant="destructive" className="mt-4">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Error</AlertTitle>
+                  <AlertDescription>
+                    {error.message}
+                  </AlertDescription>
+                </Alert>
+              )}
               <p className="mt-4 text-sm text-center">
                 ¿Ya tienes una cuenta?{" "}
                 <Link href="/login" className="text-blue-500 hover:underline">
@@ -132,5 +175,5 @@ export default function Register() {
         </Form>
       </Card>
     </div>
-  )
+  );
 }

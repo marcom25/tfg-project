@@ -33,7 +33,7 @@ function NavUser({ session }: NavUser) {
           <DropdownMenuTrigger asChild>
             <Avatar className="cursor-pointer">
               <AvatarImage src="/avatar.png" alt="User Avatar" />
-              <AvatarFallback>CC</AvatarFallback>
+              <AvatarFallback>{`${session?.user?.name?.[0] ?? "N"}${session?.user?.lastname?.[0] ?? "N"}`}</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

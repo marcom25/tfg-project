@@ -3,6 +3,11 @@ import { authConfig } from "./auth.config";
 import { NextResponse } from "next/server";
 const { auth: middleware} = NextAuth(authConfig);
 
+const authRoutes = [
+  "/login",
+  "/register",
+]
+
 const publicRoutes = [
   "/",
   "/login",
@@ -32,6 +37,14 @@ const providerRoutes = [
 export default middleware((req) => {
   const {nextUrl, auth} = req
   const isLoggedIn = !!auth?.user
+
+  if (authRoutes.includes(nextUrl.pathname) && isLoggedIn) {
+    if (auth?.user.role === "CLIENT") {
+      return NextResponse.redirect(new URL("/", nextUrl))
+    } else if (auth?.user.role === "PROVIDER") {
+      return NextResponse.redirect(new URL("/dashboard", nextUrl))
+    }
+  }
 
   if (!publicRoutes.includes(nextUrl.pathname) && !isLoggedIn) {
     return NextResponse.redirect(new URL("/login", nextUrl))

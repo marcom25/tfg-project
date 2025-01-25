@@ -14,39 +14,46 @@ export const LoginFormSchema = z.object({
     .trim(),
 });
 
-export type LoginFormState = {
-  errors?: {
-    email?: string[];
-    password?: string[];
-  };
-  message?: string | null;
-};
+export type LoginFormSchemaType = z.infer<typeof LoginFormSchema>;
 
-export const RegisterFormSchema = z.object({
-  email: z.string().email({ message: "Por favor ingresá un email válido." }).trim(),
-  password: z
-    .string()
-    .min(6, { message: "La contraseña debe contener al menos 6 caracteres." })
-    .regex(/[a-z]/, { message: "La contraseña debe contener al menos una letra minúscula." })
-    .regex(/[A-Z]/, { message: "La contraseña debe contener al menos una letra mayúscula." })
-    .regex(/[0-9]/, { message: "La contraseña debe contener al menos un número." })
-    .regex(/[^a-zA-Z0-9]/, {
-      message: "La contraseña debe contener al menos un carácter especial.",
-    })
-    .trim(),
-  userType: z.enum(["client", "provider"], {
-    message: "Por favor selecciona un tipo de usuario.",
-  }),
-});
+export const RegisterFormSchema = z
+  .object({
+    email: z
+      .string()
+      .email({ message: "Por favor ingresá un email válido." })
+      .trim(),
+    password: z
+      .string()
+      .min(6, { message: "La contraseña debe contener al menos 6 caracteres." })
+      .regex(/[a-z]/, {
+        message: "La contraseña debe contener al menos una letra minúscula.",
+      })
+      .regex(/[A-Z]/, {
+        message: "La contraseña debe contener al menos una letra mayúscula.",
+      })
+      .regex(/[0-9]/, {
+        message: "La contraseña debe contener al menos un número.",
+      })
+      .regex(/[^a-zA-Z0-9]/, {
+        message: "La contraseña debe contener al menos un carácter especial.",
+      })
+      .trim(),
+    repeatPassword: z.string(),
+    userType: z.enum(["client", "provider"], {
+      message: "Por favor selecciona un tipo de usuario.",
+    }),
+  })
+  .superRefine(({ password, repeatPassword }, ctx) => {
+    if (password !== repeatPassword) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Las contraseñas no coinciden.",
+        path: ["repeatPassword"],
+      });
+    }
+  });
 
-export type RegisterFormState = {
-  errors?: {
-    email?: string[];
-    password?: string[];
-    userType?: string[];
-  };
-  message?: string | null;
-};
+export type RegisterFormSchemaType = z.infer<typeof RegisterFormSchema>;
 
 export const UserProfileFormSchema = z.object({
   name: z.string().min(1, "El nombre es requerido").trim(),
@@ -67,20 +74,3 @@ export const UserProfileFormSchema = z.object({
     province: z.string().min(1, "La provincia es requerida").trim(),
   }),
 });
-
-export type UserProfileFormState = {
-  errors?: {
-    name?: string;
-    lastname?: string;
-    phone?: string;
-    experience?: string | null;
-    services?: Array<{ serviceName?: string }> | null;
-    aboutMe?: string;
-    address?: {
-      street?: string;
-      city?: string;
-      province?: string;
-    };
-  };
-  message?: string | null;
-};

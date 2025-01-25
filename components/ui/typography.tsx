@@ -19,7 +19,7 @@ const variantStyles = {
   subtitle2: 'text-sm font-medium',
   body1: 'text-base font-regular',
   body2: 'text-sm font-regular',
-  button: 'text-sm font-medium uppercase',
+  button: 'text-sm font-medium',
   caption: 'text-xs font-regular',
   overline: 'text-xs font-regular uppercase',
 }

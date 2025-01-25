@@ -21,7 +21,7 @@ export const authConfig = {
         id: token.id as string, // Incluir el ID en la sesión
         role: token.role as Roles, // Incluir el rol en la sesión
       };
-      console.log(session);
+     
       
       return session;
     },

@@ -11,6 +11,7 @@ export enum Roles {
 declare module "next-auth" {
   interface User extends DefaultUser {
     role: Roles; // Agrega la propiedad role
+    lastname: string | null;
   }
 
   interface Session {
@@ -21,5 +22,6 @@ declare module "next-auth" {
 declare module "next-auth/jwt" {
   interface JWT {
     role?: Roles; // Agrega role al JWT
+    lastname?: string | null;
   }
 }

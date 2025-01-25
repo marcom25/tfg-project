@@ -12,3 +12,8 @@ export enum RolesClient {
   CLIENT = "CLIENT",
   PROVIDER = "PROVIDER",
 }
+
+export interface Error {
+  error: boolean;
+  message: string;
+}
