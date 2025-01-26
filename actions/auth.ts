@@ -6,12 +6,12 @@ import {
   RegisterFormSchemaType,
 } from "./../lib/schemas";
 import * as argon2 from "argon2";
-import { signIn, signOut } from "@/auth";
+import { signIn, signOut } from "@/auth"
 import { AuthError } from "next-auth";
 import { Prisma } from "@prisma/client";
 import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { faker } from "@faker-js/faker";
+
 
 export async function register(data: RegisterFormSchemaType){
   const parsedData = RegisterFormSchema.safeParse(data);
@@ -32,6 +32,7 @@ export async function register(data: RegisterFormSchemaType){
         email: email,
         contrasena: hashedPassword,
         ultimo_ingreso: new Date(),
+        imagen_perfil_id: faker.image.avatar(),
         [userType === "client" ? "clientes" : "proveedores"]: {
           create: {},
         },
@@ -69,7 +70,7 @@ export async function register(data: RegisterFormSchemaType){
         case "CredentialsSignin":
           return {
             error: true,
-            message: "Error al iniciar sesión.",
+            message: "Credenciales inválidas.",
           };
         default:
           return {
@@ -93,12 +94,17 @@ export async function authenticate(data: LoginFormSchemaType) {
     if (error instanceof AuthError) {
       switch (error.type) {
         case "CredentialsSignin":
-          return "Credenciales inválidas.";
+          return {
+            error: true,
+            message: "Credenciales inválidas.",
+          };
         default:
-          return "Algo salió mal.";
+          return {
+            error: true,
+            message: "Algo salió mal.",
+          };
       }
     }
-    throw error;
   }
 }
 

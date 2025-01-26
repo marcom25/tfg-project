@@ -17,6 +17,19 @@ export async function getProviders() {
       },
       servicios: true
     },
+    where: {
+      usuario: {
+        nombre: {
+          not: null,
+        },
+        apellido: {
+          not: null,
+        },
+        direccion: {
+          isNot: null,
+        },
+      },
+    }
   });
 
   return providers;

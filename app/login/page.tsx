@@ -22,9 +22,16 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginFormSchema, LoginFormSchemaType } from "@/lib/schemas";
 import { LoadingButton } from "@/components/ui/loading-button";
+import { Error } from "@/lib/definitions";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 export default function Login() {
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error>({
+    error: false,
+    message: "",
+  });
   const form = useForm<LoginFormSchemaType>({
     resolver: zodResolver(LoginFormSchema),
     defaultValues: {
@@ -35,12 +42,15 @@ export default function Login() {
 
   async function onSubmit(data: LoginFormSchemaType) {
     setLoading(true);
-    await authenticate(data);
+    const response = await authenticate(data);
+    if (response?.error) {
+      setError(response);
+    }
     setLoading(false);
   }
 
   return (
-    <div className="flex items-center justify-center h-full ">
+    <div className="flex items-center justify-center min-h-[90dvh] ">
       <Card className="w-[350px]">
         <CardHeader>
           <CardTitle component="h3" variant="h3">
@@ -92,6 +102,13 @@ export default function Login() {
                 className="w-full"
                 type="submit"
               />
+              {error?.error && (
+                <Alert variant="destructive" className="mt-4">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Error</AlertTitle>
+                  <AlertDescription>{error.message}</AlertDescription>
+                </Alert>
+              )}
               <p className="mt-4 text-sm text-center">
                 ¿No tienes una cuenta?{" "}
                 <Link

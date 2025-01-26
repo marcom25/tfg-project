@@ -12,6 +12,7 @@ export const authConfig = {
       if (user) {
         token.id = user.id;
         token.role = user.role;
+        token.lastname = user.lastname;
       }
       return token;
     },
@@ -20,6 +21,7 @@ export const authConfig = {
         ...session.user,
         id: token.id as string, // Incluir el ID en la sesión
         role: token.role as Roles, // Incluir el rol en la sesión
+        lastname: token.lastname as string, // Incluir el apellido en la sesión
       };
      
       

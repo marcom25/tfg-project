@@ -4,9 +4,9 @@ import { Suspense } from "react";
 export default function Page() {
   return (
     <div className="container mx-auto p-4">
-      <Suspense fallback={<div>Cargando...</div>}>
+      {/* <Suspense fallback={<div>Cargando...</div>}>
         <ProfilePage />
-      </Suspense>
+      </Suspense> */}
     </div>
   );
 }
