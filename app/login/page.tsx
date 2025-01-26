@@ -25,6 +25,7 @@ import { LoadingButton } from "@/components/ui/loading-button";
 import { Error } from "@/lib/definitions";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -39,14 +40,14 @@ export default function Login() {
       password: "",
     },
   });
-
+  const router = useRouter();
   async function onSubmit(data: LoginFormSchemaType) {
     setLoading(true);
     const response = await authenticate(data);
     if (response?.error) {
       setError(response);
     }
-    setLoading(false);
+    router.refresh();
   }
 
   return (

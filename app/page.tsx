@@ -2,8 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Filter } from "lucide-react";
 import HomePage from "@/components/home/home-page";
+import { auth } from "@/auth";
+import HomePageClient from "@/components/home/home-page-client";
 
-export default function Page() {
+export default async function Page() {
+
+  const session = await auth()
 
   return (
     <div className="min-h-100">
@@ -35,6 +39,9 @@ export default function Page() {
             Filtros
           </Button>
         </div>
+        {session?.user && (
+          <HomePageClient />
+        )}
 
         <HomePage />
       </main>
