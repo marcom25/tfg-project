@@ -9,13 +9,20 @@ const publicRoutes = ["/", "/login", "/register", "/aboutUs"];
 
 const userRoutes = ["/agreement", "/chat", "/profile"];
 
-const clientRoutes = [...publicRoutes, ...userRoutes, "/providers"];
+const clientRoutes = [
+  ...publicRoutes,
+  ...userRoutes,
+  "/providers",
+  "/providers/createReserve",
+  /^\/providers\/\d+\/info$/, // Ruta dinámica para /providers/[id]/info
+];
 
 const providerRoutes = [
   ...publicRoutes.filter((route) => route !== "/"),
   ...userRoutes,
   "/clients",
   "/dashboard",
+  /^\/clients\/\d+\/info$/
 ];
 
 const firstLoginRoutes = ["/profile"];
@@ -45,7 +52,7 @@ export default middleware((req) => {
   }
 
   if (
-    !clientRoutes.includes(nextUrl.pathname) &&
+    !clientRoutes.some((route) => nextUrl.pathname.match(route)) &&
     isLoggedIn &&
     auth?.user.role === "CLIENT"
   ) {
@@ -53,7 +60,7 @@ export default middleware((req) => {
   }
 
   if (
-    !providerRoutes.includes(nextUrl.pathname) &&
+    !providerRoutes.some((route) => nextUrl.pathname.match(route)) &&
     isLoggedIn &&
     auth?.user.role === "PROVIDER"
   ) {

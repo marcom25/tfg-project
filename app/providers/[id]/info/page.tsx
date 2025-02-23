@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
+import { getProviderInfo } from "@/actions/provider";
+import { getRating, normalizeText } from "@/lib/utils";
 
 type ProviderInfoProps = {
   params: Promise<{
@@ -26,28 +28,7 @@ type ProviderInfoProps = {
 
 export default async function Page({ params }: ProviderInfoProps) {
   const id = (await params).id;
-
-
-  const comments = [
-    {
-      id: 1,
-      author: "Cliente Satisfecho",
-      rating: 5,
-      comment: "Excelente servicio, muy profesional y puntual.",
-    },
-    {
-      id: 2,
-      author: "Usuario Contento",
-      rating: 4,
-      comment: "Buen trabajo, aunque hubo un pequeño retraso en la entrega.",
-    },
-    {
-      id: 3,
-      author: "Cliente Recurrente",
-      rating: 5,
-      comment: "Siempre entrega un trabajo de calidad. Muy recomendado.",
-    },
-  ];
+  const provider = await getProviderInfo(Number(id));
 
   return (
     <div className="max-w-4xl mx-auto p-4">
@@ -55,21 +36,31 @@ export default async function Page({ params }: ProviderInfoProps) {
         <CardHeader className="flex flex-row justify-between gap-4">
           <div className="flex flex-row items-center gap-4">
             <Avatar className="w-20 h-20">
-              <AvatarImage src="/placeholder-avatar.jpg" alt="User's avatar" />
-              <AvatarFallback>UN</AvatarFallback>
+              <AvatarImage
+                src={provider.usuario.imagen_perfil_id ?? ""}
+                alt="User's avatar"
+              />
+              <AvatarFallback>{`${provider.usuario?.nombre?.[0]}${provider.usuario?.apellido?.[0]}`}</AvatarFallback>
             </Avatar>
             <div>
-              <CardTitle>Usuario Nombre</CardTitle>
+              <CardTitle>
+                {provider.usuario?.nombre} {provider.usuario?.apellido}
+              </CardTitle>
               <CardDescription>Proveedor de servicios</CardDescription>
               <div className="flex items-center mt-2">
                 <StarIcon className="w-4 h-4 text-yellow-400 mr-1" />
-                <span className="text-sm font-medium">4.8 (120 reseñas)</span>
+                <span className="text-sm font-medium">
+                  {getRating(provider.usuario.calificados)} (
+                  {provider.usuario.comentados.length} reseñas)
+                </span>
               </div>
             </div>
           </div>
           <div>
             <CardTitle>Experiencia</CardTitle>
-            <CardDescription className="text-end">3 años</CardDescription>
+            <CardDescription className="text-end">
+              {provider.experiencia}
+            </CardDescription>
           </div>
         </CardHeader>
         <CardContent>
@@ -77,17 +68,17 @@ export default async function Page({ params }: ProviderInfoProps) {
             <div>
               <h3 className="font-semibold mb-2">Descripción</h3>
               <p className="text-sm text-gray-600">
-                Soy una niñera profesional con experiencia en el cuidado y
-                desarrollo infantil. Me especializo en proporcionar un entorno
-                seguro, cariñoso y estimulante para los niños, adaptándome a las
-                necesidades específicas de cada familia.
+                {provider.usuario.descripcion}
               </p>
             </div>
             <div>
               <h3 className="font-semibold mb-2">Habilidades</h3>
               <div className="flex flex-wrap gap-2">
-                <Badge>Niñera</Badge>
-                <Badge>Primeros auxilios</Badge>
+                {provider.servicios.map((service) => (
+                  <Badge key={service.servicio_id}>
+                    {service.nombre_servicio}
+                  </Badge>
+                ))}
               </div>
             </div>
             <div>
@@ -95,7 +86,10 @@ export default async function Page({ params }: ProviderInfoProps) {
               <div className="flex items-center">
                 <MapPinIcon className="w-4 h-4 mr-2" />
                 <span className="text-sm text-gray-600">
-                  Buenos Aires, Argentina
+                  {provider.usuario.direccion?.ciudad.nombre},{" "}
+                  {normalizeText(
+                    provider.usuario.direccion?.ciudad.provincia?.nombre
+                  )}
                 </span>
               </div>
             </div>
@@ -128,24 +122,30 @@ export default async function Page({ params }: ProviderInfoProps) {
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
-            {comments.map((comment) => (
-              <div key={comment.id} className="border-b pb-4 last:border-b-0">
+            {provider.usuario.comentados.map((comment) => (
+              <div
+                key={comment.comentario_id}
+                className="border-b pb-4 last:border-b-0"
+              >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-semibold">{comment.author}</span>
+                  <span className="font-semibold">
+                    {comment.comentado.nombre} {comment.comentado.apellido}
+                  </span>
                   <div className="flex items-center">
-                    {[...Array(5)].map((_, i) => (
-                      <StarIcon
-                        key={i}
-                        className={`w-4 h-4 ${
-                          i < comment.rating
-                            ? "text-yellow-400"
-                            : "text-gray-300"
-                        }`}
-                      />
-                    ))}
+                    {comment.comentado.calificados.length ?
+                      [...Array(5)].map((_, i) => (
+                        <StarIcon
+                          key={i}
+                          className={`w-4 h-4 ${
+                            i < (comment.comentado.calificados && comment.comentado.calificados[0]?.puntuacion ? comment.comentado.calificados[0].puntuacion : 0)
+                              ? "text-yellow-400"
+                              : "text-gray-300"
+                          }`}
+                        />
+                      )) : "Sin Calificación"}
                   </div>
                 </div>
-                <p className="text-sm text-gray-600">{comment.comment}</p>
+                <p className="text-sm text-gray-600">{comment.comentario}</p>
               </div>
             ))}
           </div>

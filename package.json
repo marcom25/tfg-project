@@ -47,6 +47,7 @@
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
     "tfg-project": "file:",
+    "use-debounce": "^10.0.4",
     "zod": "^3.24.1"
   },
   "devDependencies": {

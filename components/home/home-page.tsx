@@ -4,11 +4,31 @@ import { Card, CardContent } from "../ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { MapPin, Star } from "lucide-react";
 import { Badge } from "../ui/badge";
-import { getProviders } from "@/actions/provider";
+import { getFilteredProviders } from "@/actions/provider";
 import { getRating } from "@/lib/utils";
+import { NoResults } from "../common/no-results";
 
-export default async function HomePage() {
-  const providers = await getProviders();
+export default async function HomePage({
+  query,
+  sortBy,
+  location,
+  minRating,
+  from,
+  to,
+}: {
+  query: string;
+  sortBy: string;
+  location: string;
+  minRating: string;
+  from: string;
+  to: string;
+}) {
+  const providers = await getFilteredProviders(query, sortBy, location, minRating, from, to);
+
+  if (!providers.length) {
+    return <NoResults />;
+  }
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {providers.map((provider) => (

@@ -24,3 +24,11 @@ export function getRating(ratings: puntuacion[] | null): number {
   return validRatings.length > 0 ? parseFloat(average.toFixed(2)) : 5;
 }
 
+export function normalizeText(text: string | undefined): string {
+  const normalizedText = text || '';
+  return normalizedText
+    .toLowerCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}

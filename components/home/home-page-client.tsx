@@ -6,8 +6,8 @@ async function HomePageClient() {
 
   return (
     <div className="py-8">
-      <h2 className="text-2xl font-bold mb-4 text-center">Mis Reservas</h2>
-      <ContractCarousel  />
+      {/* <h2 className="text-2xl font-bold mb-4 text-center">Mis Reservas</h2>
+      <ContractCarousel  /> */}
     </div>
   )
 }
