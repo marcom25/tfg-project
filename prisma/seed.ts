@@ -8,9 +8,10 @@ const prisma = new PrismaClient();
 const getRandom = <T>(arr: T[]): T =>
   arr[Math.floor(Math.random() * arr.length)];
 
-
 function getRandoma<T>(arr: T[]): T | undefined {
-  return arr.length > 0 ? arr[Math.floor(Math.random() * arr.length)] : undefined;
+  return arr.length > 0
+    ? arr[Math.floor(Math.random() * arr.length)]
+    : undefined;
 }
 async function main() {
   // 1. Crear provincias y ciudades (sin cambios)
@@ -110,7 +111,7 @@ async function main() {
             { nombre_servicio: "Cuidado de Niños" },
             { nombre_servicio: "Cuidado de Adultos" },
           ],
-        }
+        },
       },
     });
     clientes.push(cliente);
@@ -129,7 +130,7 @@ async function main() {
             { nombre_servicio: "Cuidado de Niños" },
             { nombre_servicio: "Cuidado de Adultos" },
           ],
-        }
+        },
       },
     });
     proveedores.push(proveedor);
@@ -175,20 +176,49 @@ async function main() {
     "FINISHED",
     "ACCEPTED",
   ];
+
+  // Crear los estados en la base de datos
+  for (const state of allowedStates) {
+    await prisma.estado.create({
+      data: { estado: state },
+    });
+  }
+
+  // Estados permitidos para los contratos
+  const contractStates = ["PENDING", "ON_GOING", "FINISHED"];
+  // Decisiones permitidas
+  const allowedDecisions = ["ACCEPTED", "REJECTED"];
+
   const contratos = [];
   for (let i = 1; i <= 10; i++) {
     // Seleccionar cliente y proveedor aleatorios
     const randomCliente = getRandom(clientes);
     const randomProveedor = getRandom(proveedores);
-    // Para garantizar coherencia, se crea un nuevo servicio para este contrato
+
+    // Buscar servicio relacionado
     const servicio = await prisma.servicio.findFirst({
-      where: { OR: [{ cliente_id: randomCliente.cliente_id }, { proveedor_id: randomProveedor.proveedor_id }] },
+      where: {
+        OR: [
+          { cliente_id: randomCliente.cliente_id },
+          { proveedor_id: randomProveedor.proveedor_id },
+        ],
+      },
     });
+
     if (!servicio) {
       console.error("No se encontró un servicio para el contrato");
       continue;
     }
-    const state = getRandom(allowedStates);
+
+    // Seleccionar estado solo de los permitidos para contratos
+    const estadoContrato = getRandom(contractStates);
+
+    // Generar decisiones aleatorias independientes
+    const decisionCliente = getRandom(allowedDecisions);
+    const decisionProveedor = getRandom(allowedDecisions);
+    const estado = await prisma.estado.findFirst({ where: { estado: estadoContrato } });
+
+    // Crear contrato usando el estado existente
     const contrato = await prisma.contrato.create({
       data: {
         cliente: { connect: { cliente_id: randomCliente.cliente_id } },
@@ -198,13 +228,14 @@ async function main() {
         fecha_fin: new Date(Date.now() + (7 + i) * 24 * 60 * 60 * 1000),
         cantidad_horas: 8 + i,
         monto_acordado: 100 + i * 10,
-        estado: { create: { estado: state } },
-        decision_cliente: state === "ACCEPTED" ? "Aprobado" : "Pendiente",
-        decision_proveedor: state === "ACCEPTED" ? "Aprobado" : "Pendiente",
+        estado: { connect: { estado_id: estado?.estado_id } }, // Conectar al estado existente
+        decision_cliente: decisionCliente,
+        decision_proveedor: decisionProveedor,
       },
     });
     contratos.push(contrato);
   }
+
   console.log("Contratos creados:", contratos);
 
   // 11. Crear 10 conversaciones con al menos 2 mensajes cada una

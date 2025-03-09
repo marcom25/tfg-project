@@ -59,13 +59,13 @@ function CommentSection({ providerId }: { providerId: number }) {
     checkPermission();
   }, [providerId]);
 
-  // if (!isAllowed) {
-  //   return (
-  //     <div className="mt-8 text-center text-gray-500">
-  //       Solo puedes comentar después de finalizar un servicio con este proveedor
-  //     </div>
-  //   );
-  // }
+  if (!isAllowed) {
+    return (
+      <div className="mt-8 text-center text-gray-500">
+        Solo puedes comentar después de finalizar un servicio con este proveedor
+      </div>
+    );
+  }
 
   return (
     <div className="mt-8">

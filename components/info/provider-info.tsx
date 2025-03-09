@@ -54,7 +54,7 @@ export default async function ProviderInfo({ id }: { id: number }) {
               </div>
             </div>
           </div>
-          <div>
+          <div className="flex flex-col items-end gap-1">
             <CardTitle>Experiencia</CardTitle>
             <CardDescription className="text-end">
               {provider.experiencia}

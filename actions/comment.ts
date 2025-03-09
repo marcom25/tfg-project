@@ -12,26 +12,26 @@ export async function submitCommentForProvider(
   const session = await auth();
   const userId = Number(session?.user.id || 0);
 
-//   const validContract = await prisma.contrato.findFirst({
-//     where: {
-//       OR: [
-//         {
-//           cliente: { usuario_id: userId },
-//           proveedor: { usuario_id: providerId },
-//           fecha_fin: { lte: new Date() },
-//         },
-//         {
-//           proveedor: { usuario_id: userId },
-//           cliente: { usuario_id: providerId },
-//           fecha_fin: { lte: new Date() },
-//         },
-//       ],
-//     },
-//   });
+  const validContract = await prisma.contrato.findFirst({
+    where: {
+      OR: [
+        {
+          cliente: { usuario_id: userId },
+          proveedor: { usuario_id: providerId },
+          fecha_fin: { lte: new Date() },
+        },
+        {
+          proveedor: { usuario_id: userId },
+          cliente: { usuario_id: providerId },
+          fecha_fin: { lte: new Date() },
+        },
+      ],
+    },
+  });
 
-//   if (!validContract) {
-//     throw new Error("Debes tener un contrato finalizado para comentar");
-//   }
+  if (!validContract) {
+    throw new Error("Debes tener un contrato finalizado para comentar");
+  }
 
   const userProviderId = await getUserIdFromProviderId(providerId);
   await prisma.comentario.create({
