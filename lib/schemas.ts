@@ -55,6 +55,14 @@ export const RegisterFormSchema = z
 
 export type RegisterFormSchemaType = z.infer<typeof RegisterFormSchema>;
 
+// Esquema de validación Zod
+export const CommentFormSchema = z.object({
+  rating: z.number().min(1, "Debes seleccionar una puntuación"),
+  comment: z.string().min(1, "El comentario no puede estar vacío"),
+});
+
+export type CommentFormSchemaType = z.infer<typeof CommentFormSchema>;
+
 export const UserProfileFormSchema = z.object({
   name: z.string().min(1, "El nombre es requerido").trim(),
   lastname: z.string().min(1, "El apellido es requerido").trim(),
@@ -74,3 +82,5 @@ export const UserProfileFormSchema = z.object({
     province: z.string().min(1, "La provincia es requerida").trim(),
   }),
 });
+
+

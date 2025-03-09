@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["fullTextSearchPostgres"]
 }
 
@@ -9,68 +9,70 @@ datasource db {
 }
 
 model ciudad {
-  ciudad_id Int        @id @default(autoincrement())
-  nombre    String     @db.VarChar(100)
+  ciudad_id    Int         @id @default(autoincrement())
+  nombre       String      @db.VarChar(100)
   provincia_id Int?
-  provincia provincia? @relation(fields: [provincia_id], references: [provincia_id], onDelete: Cascade, onUpdate: NoAction)
-  direccion direccion[]
+  provincia    provincia?  @relation(fields: [provincia_id], references: [provincia_id], onDelete: Cascade, onUpdate: NoAction)
+  direccion    direccion[]
 }
 
 model cliente {
-  cliente_id  Int       @id @default(autoincrement())
-  usuario_id  Int?
-  rango_monetario_id    Int?
-  usuario     usuario?  @relation(fields: [usuario_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
-  contratos   contrato[]
-  servicios   servicio[]
+  cliente_id         Int        @id @default(autoincrement())
+  usuario_id         Int?
+  rango_monetario_id Int?
+  usuario            usuario?   @relation(fields: [usuario_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
+  contratos          contrato[]
+  servicios          servicio[]
 }
 
 model comentario {
-  comentario_id Int      @id @default(autoincrement())
+  comentario_id         Int         @id @default(autoincrement())
   usuario_comentador_id Int
   usuario_comentado_id  Int
-  comentario         String
-  fecha_comentario         DateTime @default(now()) @db.Timestamp(6)
-  comentado     usuario  @relation("comentado", fields: [usuario_comentado_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
-  comentador    usuario  @relation("comentador", fields: [usuario_comentador_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
+  comentario            String
+  puntuacion_id         Int?        @unique
+  fecha_comentario      DateTime    @default(now()) @db.Timestamp(6)
+  comentado             usuario     @relation("comentado", fields: [usuario_comentado_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
+  comentador            usuario     @relation("comentador", fields: [usuario_comentador_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
+  puntuacion            puntuacion? @relation("puntuacion", fields: [puntuacion_id], references: [puntuacion_id]) // Relación 1:1
 }
 
 model contrato {
-  contrato_id   Int       @id @default(autoincrement())
-  cliente_id    Int
-  proveedor_id  Int
-  fecha_inicio  DateTime  @db.Timestamp(6)
-  fecha_fin     DateTime  @db.Timestamp(6)
-  cantidad_horas         Int
-  monto_acordado         Decimal   @db.Decimal(10, 2)
-  fecha_creacion  DateTime  @default(now()) @db.Timestamp(6)
-  servicio_id   Int
-  estado_id     Int
-  decision_cliente  String
+  contrato_id        Int       @id @default(autoincrement())
+  cliente_id         Int
+  proveedor_id       Int
+  fecha_inicio       DateTime  @db.Timestamp(6)
+  fecha_fin          DateTime  @db.Timestamp(6)
+  cantidad_horas     Int
+  monto_acordado     Decimal   @db.Decimal(10, 2)
+  fecha_creacion     DateTime  @default(now()) @db.Timestamp(6)
+  servicio_id        Int
+  estado_id          Int
+  decision_cliente   String
   decision_proveedor String
-  cliente       cliente   @relation(fields: [cliente_id], references: [cliente_id], onDelete: Cascade, onUpdate: NoAction)
-  estado        estado    @relation(fields: [estado_id], references: [estado_id], onUpdate: NoAction)
-  proveedor     proveedor @relation(fields: [proveedor_id], references: [proveedor_id], onDelete: Cascade, onUpdate: NoAction)
-  servicio      servicio  @relation(fields: [servicio_id], references: [servicio_id], onDelete: Cascade, onUpdate: NoAction)
+  cliente            cliente   @relation(fields: [cliente_id], references: [cliente_id], onDelete: Cascade, onUpdate: NoAction)
+  estado             estado    @relation(fields: [estado_id], references: [estado_id], onUpdate: NoAction)
+  proveedor          proveedor @relation(fields: [proveedor_id], references: [proveedor_id], onDelete: Cascade, onUpdate: NoAction)
+  servicio           servicio  @relation(fields: [servicio_id], references: [servicio_id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model conversacion {
-  conversacion_id Int      @id @default(autoincrement())
-  usuario_receptor_id     Int
-  usuario_remitente_id    Int
-  fecha_creacion  DateTime @default(now()) @db.Timestamp(6)
-  receptor        usuario  @relation("receptor", fields: [usuario_receptor_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
-  remitente       usuario  @relation("remitente", fields: [usuario_remitente_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
-  mensajes        mensaje[]
+  conversacion_id      Int       @id @default(autoincrement())
+  usuario_receptor_id  Int
+  usuario_remitente_id Int
+  fecha_creacion       DateTime  @default(now()) @db.Timestamp(6)
+  receptor             usuario   @relation("receptor", fields: [usuario_receptor_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
+  remitente            usuario   @relation("remitente", fields: [usuario_remitente_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
+  mensajes             mensaje[]
 }
 
 model direccion {
-  direccion_id Int      @id @default(autoincrement())
-  nombre       String?  @db.VarChar(100)
-  calle        String?  @db.VarChar(100)
-  numero       String?  @db.VarChar(20)
+  direccion_id Int       @id @default(autoincrement())
+  nombre       String?   @db.VarChar(100)
+  calle        String?   @db.VarChar(100)
+  numero       String?   @db.VarChar(20)
   ciudad_id    Int
-  ciudad       ciudad   @relation(fields: [ciudad_id], references: [ciudad_id], onDelete: Cascade, onUpdate: NoAction)
+  ciudad       ciudad    @relation(fields: [ciudad_id], references: [ciudad_id], onDelete: Cascade, onUpdate: NoAction)
   usuarios     usuario[]
 }
 
@@ -81,23 +83,23 @@ model estado {
 }
 
 model mensaje {
-  mensaje_id      Int        @id @default(autoincrement())
+  mensaje_id      Int           @id @default(autoincrement())
   remitente_id    Int
   conversacion_id Int?
-  mensaje           String
-  fecha_creacion    DateTime   @default(now()) @db.Timestamp(6)
+  mensaje         String
+  fecha_creacion  DateTime      @default(now()) @db.Timestamp(6)
   conversacion    conversacion? @relation(fields: [conversacion_id], references: [conversacion_id], onDelete: Cascade, onUpdate: NoAction)
-  remitente       usuario    @relation(fields: [remitente_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
+  remitente       usuario       @relation(fields: [remitente_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model proveedor {
-  proveedor_id Int       @id @default(autoincrement())
-  usuario_id   Int
-  experiencia  String?
-  rango_monetario_id     Int?
-  contratos    contrato[]
-  usuario      usuario   @relation(fields: [usuario_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
-  servicios    servicio[]
+  proveedor_id       Int        @id @default(autoincrement())
+  usuario_id         Int
+  experiencia        String?
+  rango_monetario_id Int?
+  contratos          contrato[]
+  usuario            usuario    @relation(fields: [usuario_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
+  servicios          servicio[]
 }
 
 model provincia {
@@ -107,13 +109,15 @@ model provincia {
 }
 
 model puntuacion {
-  puntuacion_id Int      @id @default(autoincrement())
-  usuario_calificado_id Int
+  puntuacion_id          Int         @id @default(autoincrement())
+  usuario_calificado_id  Int
   usuario_calificador_id Int
-  puntuacion         Int?
-  fecha         DateTime? @default(now()) @db.Timestamp(6)
-  calificado    usuario  @relation("calificado", fields: [usuario_calificado_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
-  calificador   usuario  @relation("calificador", fields: [usuario_calificador_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
+  puntuacion             Int
+  comentario_id          Int?        
+  fecha                  DateTime?   @default(now()) @db.Timestamp(6)
+  calificado             usuario     @relation("calificado", fields: [usuario_calificado_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
+  calificador            usuario     @relation("calificador", fields: [usuario_calificador_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
+  comentario             comentario? @relation("puntuacion")
 }
 
 model rango_monetario {
@@ -123,8 +127,8 @@ model rango_monetario {
 }
 
 model rol {
-  rol_id      Int        @id @default(autoincrement())
-  nombre_rol      String     @db.VarChar(50)
+  rol_id       Int           @id @default(autoincrement())
+  nombre_rol   String        @db.VarChar(50)
   rol_usuarios rol_usuario[]
 }
 
@@ -138,13 +142,15 @@ model rol_usuario {
 }
 
 model servicio {
-  servicio_id Int       @id @default(autoincrement())
-  proveedor_id Int
-  cliente_id   Int
-  nombre_servicio       String    @db.VarChar(100)
-  contratos    contrato[]
-  cliente      cliente   @relation(fields: [cliente_id], references: [cliente_id], onDelete: Cascade, onUpdate: NoAction)
-  proveedor    proveedor @relation(fields: [proveedor_id], references: [proveedor_id], onDelete: Cascade, onUpdate: NoAction)
+  servicio_id     Int        @id @default(autoincrement())
+  proveedor_id    Int?       @unique 
+  cliente_id      Int?       @unique
+  nombre_servicio String     @db.VarChar(100)
+  contratos       contrato[]
+  cliente         cliente?   @relation(fields: [cliente_id], references: [cliente_id], onDelete: Cascade, onUpdate: NoAction)
+  proveedor       proveedor? @relation(fields: [proveedor_id], references: [proveedor_id], onDelete: Cascade, onUpdate: NoAction)
+
+  // @@check("(proveedor_id IS NOT NULL AND cliente_id IS NULL) OR (cliente_id IS NOT NULL AND proveedor_id IS NULL)")
 }
 
 model spatial_ref_sys {
@@ -156,26 +162,26 @@ model spatial_ref_sys {
 }
 
 model usuario {
-  usuario_id     Int         @id @default(autoincrement())
-  nombre         String?     @db.VarChar(100)
-  apellido       String?     @db.VarChar(100)
-  descripcion    String?
-  direccion_id   Int?
-  email          String      @unique @db.VarChar(150)
-  contrasena     String      @db.VarChar(255)
-  telefono       String?     @db.VarChar(20)
-  imagen_perfil_id      String?
-  ultimo_ingreso DateTime?   @db.Timestamp(6)
-  fecha_registro DateTime?   @default(now()) @db.Timestamp(6)
-  clientes       cliente[]
-  comentarios    comentario[] @relation("comentado")
-  comentados     comentario[] @relation("comentador")
-  conversaciones conversacion[] @relation("receptor")
-  remitidos      conversacion[] @relation("remitente")
-  mensajes       mensaje[]
-  proveedores    proveedor[]
-  calificados    puntuacion[] @relation("calificado")
-  calificadores  puntuacion[] @relation("calificador")
-  roles          rol_usuario[]
-  direccion      direccion?  @relation(fields: [direccion_id], references: [direccion_id], onUpdate: NoAction)
+  usuario_id       Int            @id @default(autoincrement())
+  nombre           String?        @db.VarChar(100)
+  apellido         String?        @db.VarChar(100)
+  descripcion      String?
+  direccion_id     Int?
+  email            String         @unique @db.VarChar(150)
+  contrasena       String         @db.VarChar(255)
+  telefono         String?        @db.VarChar(20)
+  imagen_perfil_id String?
+  ultimo_ingreso   DateTime?      @db.Timestamp(6)
+  fecha_registro   DateTime?      @default(now()) @db.Timestamp(6)
+  clientes         cliente[]
+  comentarios      comentario[]   @relation("comentado")
+  comentados       comentario[]   @relation("comentador")
+  conversaciones   conversacion[] @relation("receptor")
+  remitidos        conversacion[] @relation("remitente")
+  mensajes         mensaje[]
+  proveedores      proveedor[]
+  calificados      puntuacion[]   @relation("calificado")
+  calificadores    puntuacion[]   @relation("calificador")
+  roles            rol_usuario[]
+  direccion        direccion?     @relation(fields: [direccion_id], references: [direccion_id], onUpdate: NoAction)
 }

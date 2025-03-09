@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 
+
 export async function getFilteredProviders(
   query: string,
   sortBy: string,
@@ -19,7 +20,7 @@ export async function getFilteredProviders(
   }
 
   // 2. Convertir parámetros
-  const minRatingValue = parseInt(minRating); 
+  const minRatingValue = parseInt(minRating);
   const fromDate = from ? new Date(from) : undefined;
   const toDate = to ? new Date(to) : undefined;
 
@@ -133,7 +134,7 @@ export async function getFilteredProviders(
 }
 
 export async function getProviderInfo(id: number) {
-  const provider = await prisma.proveedor.findFirstOrThrow({
+   const provider = await prisma.proveedor.findFirstOrThrow({
     where: {
       proveedor_id: id,
       usuario: {
@@ -161,17 +162,10 @@ export async function getProviderInfo(id: number) {
             },
           },
           calificados: true,
-          comentados: {
+          comentarios: {
             include: {
-              comentado: {
-                include: {
-                  calificados: {
-                    where: {
-                      usuario_calificado_id: id,
-                    },
-                  },
-                },
-              },
+              comentador: true,
+              puntuacion: true
             },
           },
         },
@@ -179,6 +173,6 @@ export async function getProviderInfo(id: number) {
       servicios: true,
     },
   });
-
+    
   return provider;
 }

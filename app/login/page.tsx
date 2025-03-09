@@ -47,7 +47,7 @@ export default function Login() {
     if (response?.error) {
       setError(response);
     }
-    router.refresh();
+    router.refresh()
   }
 
   return (

@@ -25,7 +25,7 @@ const providerRoutes = [
   /^\/clients\/\d+\/info$/
 ];
 
-const firstLoginRoutes = ["/profile"];
+
 
 export default middleware((req) => {
   const { nextUrl, auth } = req;
@@ -38,8 +38,7 @@ export default middleware((req) => {
       return NextResponse.redirect(new URL("/dashboard", nextUrl));
     }
   }
- 
-
+  
   if (
     nextUrl.pathname !== "/profile" &&
     (auth?.user.name === null || auth?.user.lastname === null)
