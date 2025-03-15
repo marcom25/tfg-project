@@ -103,7 +103,7 @@ export default async function ProviderInfo({ id }: { id: number }) {
                   Enviar email
                 </Button>
                 <Button variant="outline" size="sm">
-                  <Link href={`/providers/createReserve`} className="flex">
+                  <Link href={`/providers/${id}/createReserve`} className="flex">
                     <NotepadText className="w-4 h-4 mr-2" />
                     Reservar turno
                   </Link>

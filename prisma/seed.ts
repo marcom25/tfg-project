@@ -1,6 +1,8 @@
+import { direccion } from './../node_modules/.prisma/client/index.d';
 import { faker } from "@faker-js/faker";
 import { PrismaClient } from "@prisma/client";
 import { provinciasData } from "./location.seed";
+import { create } from "domain";
 
 const prisma = new PrismaClient();
 
@@ -105,14 +107,8 @@ async function main() {
   for (let i = 0; i < usersCliente.length; i++) {
     const cliente = await prisma.cliente.create({
       data: {
-        usuario: { connect: { usuario_id: usersCliente[i].usuario_id } },
-        servicios: {
-          create: [
-            { nombre_servicio: "Cuidado de Niños" },
-            { nombre_servicio: "Cuidado de Adultos" },
-          ],
-        },
-      },
+        usuario: { connect: { usuario_id: usersCliente[i].usuario_id } }
+      }
     });
     clientes.push(cliente);
   }
@@ -124,49 +120,73 @@ async function main() {
     const proveedor = await prisma.proveedor.create({
       data: {
         usuario: { connect: { usuario_id: usersProveedor[i].usuario_id } },
-        experiencia: `${2 + i} años de experiencia`,
-        servicios: {
-          create: [
-            { nombre_servicio: "Cuidado de Niños" },
-            { nombre_servicio: "Cuidado de Adultos" },
-          ],
-        },
-      },
+        experiencia: `${2 + i} años de experiencia`
+      }
     });
     proveedores.push(proveedor);
   }
   console.log("Proveedores creados:", proveedores);
 
-  // 8. Crear 10 registros de rango_monetario y asignar uno aleatorio a cada proveedor
-  const rangos = [];
-  for (let i = 1; i <= 20; i++) {
-    const rango = await prisma.rango_monetario.create({
-      data: {
-        minimo: parseFloat((i * 100).toFixed(2)),
-        maximo: parseFloat((i * 100 + 200).toFixed(2)),
-      },
-    });
-    rangos.push(rango);
-  }
-  console.log("Rangos monetarios creados:", rangos);
+  // 8. Create services for clients and providers
+  const serviciosCliente = [
+    "Cuidado de Niños",
+    "Cuidado de Mascotas",
+    "Limpieza del Hogar",
+    "Asistencia a Personas Mayores",
+    "Jardinería",
+  ]
 
-  for (let i = 0; i < proveedores.length; i++) {
-    const randomRango = getRandom(rangos);
-    await prisma.proveedor.update({
-      where: { proveedor_id: proveedores[i].proveedor_id },
-      data: { rango_monetario_id: randomRango.rango_id },
-    });
+  // Servicios disponibles para proveedores
+  const serviciosProveedor = [
+    "Cuidado de Adultos Mayores",
+    "Acompañamiento Domiciliario",
+    "Servicios de Enfermería",
+    "Asistencia Educativa",
+    "Servicios de Cocina",
+  ]
+
+  // Crear servicios para clientes
+  const serviciosCreados = []
+
+  for (const cliente of clientes) {
+    // Seleccionar un servicio aleatorio para cada cliente
+    const servicioAleatorio = serviciosCliente[Math.floor(Math.random() * serviciosCliente.length)]
+
+    const servicio = await prisma.servicio.create({
+      data: {
+        nombre_servicio: servicioAleatorio,
+        cliente: { connect: { cliente_id: cliente.cliente_id } },
+      },
+    })
+
+    serviciosCreados.push(servicio)
+    console.log(`Servicio creado para cliente ${cliente.cliente_id}: ${servicioAleatorio}`)
   }
+
+  // Crear servicios para proveedores
+  for (const proveedor of proveedores) {
+    // Seleccionar un servicio aleatorio para cada proveedor
+    const servicioAleatorio = serviciosProveedor[Math.floor(Math.random() * serviciosProveedor.length)]
+
+    const servicio = await prisma.servicio.create({
+      data: {
+        nombre_servicio: servicioAleatorio,
+        proveedor: { connect: { proveedor_id: proveedor.proveedor_id } },
+      },
+    })
+
+    serviciosCreados.push(servicio)
+    console.log(`Servicio creado para proveedor ${proveedor.proveedor_id}: ${servicioAleatorio}`)
+  }
+
+  console.log(`Total de servicios creados: ${serviciosCreados.length}`)
+
+  // After this point, continue with the existing code for creating contratos...
+  
 
   // SOLO CUANDO YA HAY CLIENTES CREADOS
   // const clientes = await prisma.cliente.findMany();
-  for (let i = 0; i < clientes.length; i++) {
-    const randomRango = getRandom(rangos);
-    await prisma.cliente.update({
-      where: { cliente_id: clientes[i].cliente_id },
-      data: { rango_monetario_id: randomRango.rango_id },
-    });
-  }
+  
 
   // 10. Crear 10 contratos con estados permitidos
   const allowedStates = [
@@ -216,7 +236,10 @@ async function main() {
     // Generar decisiones aleatorias independientes
     const decisionCliente = getRandom(allowedDecisions);
     const decisionProveedor = getRandom(allowedDecisions);
-    const estado = await prisma.estado.findFirst({ where: { estado: estadoContrato } });
+    const randomCity = getRandom(cities);
+    const estado = await prisma.estado.findFirst({
+      where: { estado: estadoContrato },
+    });
 
     // Crear contrato usando el estado existente
     const contrato = await prisma.contrato.create({
@@ -231,6 +254,27 @@ async function main() {
         estado: { connect: { estado_id: estado?.estado_id } }, // Conectar al estado existente
         decision_cliente: decisionCliente,
         decision_proveedor: decisionProveedor,
+        detalles: faker.lorem.sentence(),
+        direccion: {
+          create: {
+            nombre: `Dirección ${i}`,
+            calle: faker.location.street(),
+            numero: faker.location.buildingNumber(),
+            ciudad: { connect: { ciudad_id: randomCity.ciudad_id } },
+          },
+        },
+        rango_cliente: {
+          create: {
+            minimo: parseFloat((i * 100).toFixed(2)),
+            maximo: parseFloat((i * 100 + 200).toFixed(2)),
+          },
+        },
+        rango_proveedor: {
+          create: {
+            minimo: parseFloat((i * 100).toFixed(2)),
+            maximo: parseFloat((i * 100 + 200).toFixed(2)),
+          },
+        },
       },
     });
     contratos.push(contrato);

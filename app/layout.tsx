@@ -3,6 +3,7 @@ import "./globals.css";
 import { geistMono, geistSans } from "@/font";
 
 import Navbar from "@/components/navbar/navbar";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Care Connect",
@@ -22,6 +23,8 @@ export default function RootLayout({
       >
         <Navbar />
         <main className="flex-grow">{children}</main>
+        <Toaster />
+
       </body>
     </html>
   );

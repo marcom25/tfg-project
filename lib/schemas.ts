@@ -63,24 +63,55 @@ export const CommentFormSchema = z.object({
 
 export type CommentFormSchemaType = z.infer<typeof CommentFormSchema>;
 
-export const UserProfileFormSchema = z.object({
-  name: z.string().min(1, "El nombre es requerido").trim(),
-  lastname: z.string().min(1, "El apellido es requerido").trim(),
-  phone: z
-    .string()
-    .min(10, "El teléfono debe tener al menos 10 dígitos")
-    .trim(),
-  experience: z.string().nullable(),
-  services: z.string().min(1, "Debe seleccionar al menos un servicio").trim(),
-  aboutMe: z
-    .string()
-    .max(500, "La descripción no puede exceder los 500 caracteres")
-    .trim(),
-  address: z.object({
-    street: z.string().min(1, "La dirección es requerida").trim(),
-    city: z.string().min(1, "La ciudad es requerida").trim(),
-    province: z.string().min(1, "La provincia es requerida").trim(),
-  }),
-});
+
+export const ReservationFormSchema = z
+  .object({
+    startDate: z.date({
+      required_error: "La fecha de inicio es requerida",
+    }),
+    endDate: z
+      .date({
+        required_error: "La fecha de finalización es requerida",
+      })
+      .refine((date) => date > new Date(), {
+        message: "La fecha de finalización debe ser en el futuro",
+      }),
+    minimumRange: z.coerce
+      .number({
+        required_error: "El rango mínimo es requerido",
+        invalid_type_error: "Debe ser un número",
+      })
+      .min(0, { message: "El valor mínimo debe ser mayor o igual a 0" }),
+    maximumRange: z.coerce
+      .number({
+        required_error: "El rango máximo es requerido",
+        invalid_type_error: "Debe ser un número",
+      })
+      .min(0, { message: "El valor máximo debe ser mayor o igual a 0" }),
+    duration: z.string({
+      required_error: "La duración es requerida",
+    }),
+    street: z.string().min(3, { message: "La calle debe tener al menos 3 caracteres" }),
+    streetNumber: z.coerce
+      .number({
+        required_error: "El número es requerido",
+        invalid_type_error: "Debe ser un número",
+      })
+      .min(1, { message: "El número debe ser mayor a 0" }),
+    provinceId: z.string({
+      required_error: "La provincia es requerida",
+    }),
+    cityId: z.string({
+      required_error: "La ciudad es requerida",
+    }),
+    requirements: z.string().max(500, { message: "Máximo 500 caracteres" }).optional(),
+  })
+  .refine((data) => data.maximumRange > data.minimumRange, {
+    message: "El rango máximo debe ser mayor que el rango mínimo",
+    path: ["maximumRange"],
+  })
+
+export type ReservationFormSchemaType = z.infer<typeof ReservationFormSchema>
+
 
 

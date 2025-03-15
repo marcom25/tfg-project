@@ -17,3 +17,15 @@ export interface Error {
   error: boolean;
   message: string;
 }
+
+export enum ContractStates {
+  PENDING = 1,
+  ON_GOING = 2,
+  REJECTED = 3,
+}
+
+export enum DecisionStates {
+  ACCEPTED = "ACCEPTED",
+  REJECTED = "REJECTED",
+  PENDING = "PENDING",
+}

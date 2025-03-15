@@ -19,7 +19,6 @@ model ciudad {
 model cliente {
   cliente_id         Int        @id @default(autoincrement())
   usuario_id         Int?
-  rango_monetario_id Int?
   usuario            usuario?   @relation(fields: [usuario_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
   contratos          contrato[]
   servicios          servicio[]
@@ -44,16 +43,23 @@ model contrato {
   fecha_inicio       DateTime  @db.Timestamp(6)
   fecha_fin          DateTime  @db.Timestamp(6)
   cantidad_horas     Int
-  monto_acordado     Decimal   @db.Decimal(10, 2)
+  detalles            String? @db.VarChar(500)
+  rango_monetario_cliente_id Int? 
+  rango_monetario_proveedor_id Int? 
+  monto_acordado     Decimal?   @db.Decimal(10, 2)
   fecha_creacion     DateTime  @default(now()) @db.Timestamp(6)
-  servicio_id        Int
-  estado_id          Int
-  decision_cliente   String
-  decision_proveedor String
+  servicio_id        Int?
+  estado_id          Int?
+  decision_cliente   String?
+  decision_proveedor String?
+  direccion_id       Int?
+  direccion          direccion? @relation(fields: [direccion_id], references: [direccion_id], onDelete: NoAction, onUpdate: NoAction)
   cliente            cliente   @relation(fields: [cliente_id], references: [cliente_id], onDelete: Cascade, onUpdate: NoAction)
-  estado             estado    @relation(fields: [estado_id], references: [estado_id], onUpdate: NoAction)
+  estado             estado?    @relation(fields: [estado_id], references: [estado_id], onUpdate: NoAction)
   proveedor          proveedor @relation(fields: [proveedor_id], references: [proveedor_id], onDelete: Cascade, onUpdate: NoAction)
-  servicio           servicio  @relation(fields: [servicio_id], references: [servicio_id], onDelete: Cascade, onUpdate: NoAction)
+  servicio           servicio?  @relation(fields: [servicio_id], references: [servicio_id], onDelete: Cascade, onUpdate: NoAction)
+  rango_cliente rango_monetario? @relation("rango_cliente", fields: [rango_monetario_cliente_id], references: [rango_id], onDelete: NoAction, onUpdate: NoAction) 
+  rango_proveedor rango_monetario? @relation("rango_proveedor", fields: [rango_monetario_proveedor_id], references: [rango_id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model conversacion {
@@ -74,6 +80,7 @@ model direccion {
   ciudad_id    Int
   ciudad       ciudad    @relation(fields: [ciudad_id], references: [ciudad_id], onDelete: Cascade, onUpdate: NoAction)
   usuarios     usuario[]
+  contratos    contrato[]
 }
 
 model estado {
@@ -96,7 +103,6 @@ model proveedor {
   proveedor_id       Int        @id @default(autoincrement())
   usuario_id         Int
   experiencia        String?
-  rango_monetario_id Int?
   contratos          contrato[]
   usuario            usuario    @relation(fields: [usuario_id], references: [usuario_id], onDelete: Cascade, onUpdate: NoAction)
   servicios          servicio[]
@@ -124,6 +130,8 @@ model rango_monetario {
   rango_id Int      @id @default(autoincrement())
   minimo   Decimal? @db.Decimal(10, 2)
   maximo   Decimal? @db.Decimal(10, 2)
+  contratos_cliente   contrato[] @relation("rango_cliente")
+  contratos_proveedor contrato[] @relation("rango_proveedor")
 }
 
 model rol {
