@@ -20,3 +20,13 @@ export async function getUserIdFromClientId(clientId: number) {
 
   return client?.usuario_id;
 }
+
+export async function getClientIdFromUserId(userId: number) {
+  const client = await prisma.cliente.findFirst({
+    where: {
+      usuario_id: userId,
+    },
+  });
+
+  return client?.cliente_id;
+}

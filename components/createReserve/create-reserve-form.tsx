@@ -1,73 +1,48 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
-import { CalendarIcon, Clock, FileText, CreditCard } from "lucide-react";
+import type React from "react"
 
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
-import { LoadingButton } from "@/components/ui/loading-button";
-import { provincia, ciudad } from "@prisma/client";
-import {
-  ReservationFormSchema,
-  ReservationFormSchemaType,
-} from "@/lib/schemas";
-import { normalizeText } from "@/lib/utils";
-import { createReservation } from "@/actions/contract";
-import { toast } from "sonner";
+import { useEffect, useState } from "react"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { format } from "date-fns"
+import { es } from "date-fns/locale"
+import { CalendarIcon, Clock, FileText, CreditCard } from "lucide-react"
+
+import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { AlertCircle } from "lucide-react"
+import { LoadingButton } from "@/components/ui/loading-button"
+import type { provincia, ciudad } from "@prisma/client"
+import { ReservationFormSchema, type ReservationFormSchemaType } from "@/lib/schemas"
+import { normalizeText, formatNumber, unformatNumber } from "@/lib/utils"
+import { createReservation } from "@/actions/contract"
+import { toast } from "sonner"
+import { useForm } from "react-hook-form"
+import { useRouter } from "next/navigation"
+
 
 type ReservationFormProps = {
-  id: string;
-  provinces: (provincia & { ciudades: ciudad[] })[];
-  providerName: string;
-};
+  id: string
+  provinces: (provincia & { ciudades: ciudad[] })[]
+  providerName: string
+}
 
-export default function ReservationForm({
-  id,
-  provinces,
-  providerName,
-}: ReservationFormProps) {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [successMessage, setSuccessMessage] = useState<string>("");
+export default function ReservationForm({ id, provinces, providerName }: ReservationFormProps) {
+  const router = useRouter()
+  const [loading, setLoading] = useState<boolean>(false)
+  const [successMessage, setSuccessMessage] = useState<string>("")
   const [error, setError] = useState<{ error: boolean; message: string }>({
     error: false,
     message: "",
-  });
+  })
 
   const form = useForm<ReservationFormSchemaType>({
     resolver: zodResolver(ReservationFormSchema),
@@ -78,34 +53,49 @@ export default function ReservationForm({
       maximumRange: 0,
       duration: "",
       street: "",
-      streetNumber: undefined,
+      streetNumber: 0,
       provinceId: "",
       cityId: "",
       requirements: "",
     },
-  });
+  })
 
   // Get the selected province to filter cities
-  const selectedProvinceId = form.watch("provinceId");
-  const minimumRange = form.watch("minimumRange");
-  const maximumRange = form.watch("maximumRange");
-  const selectedProvince = provinces.find(
-    (p) => p.provincia_id === Number(selectedProvinceId)
-  );
-  const cities = selectedProvince?.ciudades || [];
+  const selectedProvinceId = form.watch("provinceId")
+  const minimumRange = form.watch("minimumRange")
+  const maximumRange = form.watch("maximumRange")
+  const selectedProvince = provinces.find((p) => p.provincia_id === Number(selectedProvinceId))
+  const cities = selectedProvince?.ciudades || []
+
+  // Estados para manejar los valores de entrada formateados
+  const [minRangeInput, setMinRangeInput] = useState<string>("")
+  const [maxRangeInput, setMaxRangeInput] = useState<string>("")
+
+  // Inicializar los valores formateados cuando cambian los valores del formulario
+  useEffect(() => {
+    setMinRangeInput(formatNumber(minimumRange))
+    setMaxRangeInput(formatNumber(maximumRange))
+  }, [minimumRange, maximumRange])
 
   async function onSubmit(data: ReservationFormSchemaType) {
-    setLoading(true);
-    const response = await createReservation(Number(id), data);
-    if (response?.error) {
-      setError(response);
+    const isValid = await form.trigger()
+    if (!isValid) {
+      return
     }
-    setSuccessMessage(response.message);
+
+    setLoading(true)
+    const response = await createReservation(Number(id), data)
+    if (response?.error) {
+      setError(response)
+    }
+    setSuccessMessage(response.message)
     toast.success(response.message || "Reserva creada con éxito")
     form.reset()
-    
-    setLoading(false);
-    
+    setMinRangeInput("")
+    setMaxRangeInput("")
+
+    setLoading(false)
+    router.push("/")
   }
 
   useEffect(() => {
@@ -114,13 +104,40 @@ export default function ReservationForm({
     }
   }, [successMessage])
 
+  // Función para manejar cambios en los inputs de rango monetario
+  const handleRangeInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setInputValue: React.Dispatch<React.SetStateAction<string>>,
+    fieldName: "minimumRange" | "maximumRange",
+  ) => {
+    // Obtener el valor actual del input
+    let inputValue = e.target.value
+
+    // Permitir solo dígitos, puntos y una sola coma
+    inputValue = inputValue.replace(/[^\d.,]/g, "")
+
+    // Asegurar que solo haya una coma
+    const commaCount = (inputValue.match(/,/g) || []).length
+    if (commaCount > 1) {
+      const parts = inputValue.split(",")
+      inputValue = parts[0] + "," + parts.slice(1).join("")
+    }
+
+    // Formatear el valor para mostrar
+    const formattedValue = formatNumber(inputValue)
+
+    // Actualizar el estado del input
+    setInputValue(formattedValue)
+
+    // Convertir a número y actualizar el formulario
+    const numericValue = unformatNumber(formattedValue)
+    form.setValue(fieldName, numericValue)
+  }
+
   return (
     <div className="grid md:grid-cols-3 gap-8">
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="md:col-span-2 space-y-6"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="md:col-span-2 space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Detalles de la reserva</CardTitle>
@@ -138,16 +155,11 @@ export default function ReservationForm({
                     <FormControl>
                       <Popover>
                         <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="w-full justify-start text-left font-normal"
-                          >
+                          <Button variant="outline" className="w-full justify-start text-left font-normal">
                             {field.value ? (
                               format(field.value, "PPP", { locale: es })
                             ) : (
-                              <span>
-                                Selecciona la fecha de inicio del servicio
-                              </span>
+                              <span>Selecciona la fecha de inicio del servicio</span>
                             )}
                           </Button>
                         </PopoverTrigger>
@@ -179,16 +191,11 @@ export default function ReservationForm({
                     <FormControl>
                       <Popover>
                         <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="w-full justify-start text-left font-normal"
-                          >
+                          <Button variant="outline" className="w-full justify-start text-left font-normal">
                             {field.value ? (
                               format(field.value, "PPP", { locale: es })
                             ) : (
-                              <span>
-                                Selecciona la fecha de finalización del servicio
-                              </span>
+                              <span>Selecciona la fecha de finalización del servicio</span>
                             )}
                           </Button>
                         </PopoverTrigger>
@@ -199,11 +206,8 @@ export default function ReservationForm({
                             onSelect={field.onChange}
                             initialFocus
                             disabled={(date) => {
-                              const startDate = form.watch("startDate");
-                              return (
-                                date < new Date() ||
-                                (startDate && date < startDate)
-                              );
+                              const startDate = form.watch("startDate")
+                              return date < new Date() || (startDate && date < startDate)
                             }}
                           />
                         </PopoverContent>
@@ -226,12 +230,16 @@ export default function ReservationForm({
                     render={({ field }) => (
                       <FormItem className="w-full">
                         <FormControl>
-                          <Input
-                            type="number"
-                            placeholder="Mínimo"
-                            {...field}
-                            value={field.value === 0 ? "" : field.value}
-                          />
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                            <Input
+                              type="text"
+                              placeholder="Mínimo"
+                              className="pl-7"
+                              value={minRangeInput}
+                              onChange={(e) => handleRangeInputChange(e, setMinRangeInput, "minimumRange")}
+                            />
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -243,12 +251,16 @@ export default function ReservationForm({
                     render={({ field }) => (
                       <FormItem className="w-full">
                         <FormControl>
-                          <Input
-                            type="number"
-                            placeholder="Máximo"
-                            {...field}
-                            value={field.value === 0 ? "" : field.value}
-                          />
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                            <Input
+                              type="text"
+                              placeholder="Máximo"
+                              className="pl-7"
+                              value={maxRangeInput}
+                              onChange={(e) => handleRangeInputChange(e, setMaxRangeInput, "maximumRange")}
+                            />
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -260,17 +272,14 @@ export default function ReservationForm({
               <FormField
                 control={form.control}
                 name="duration"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem className="space-y-2">
                     <Label htmlFor="duration">
                       <Clock className="mr-2 h-4 w-4 inline" />
                       Duración (horas)
                     </Label>
                     <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <SelectTrigger>
                           <SelectValue placeholder="Selecciona la duración" />
                         </SelectTrigger>
@@ -333,9 +342,9 @@ export default function ReservationForm({
                       <FormControl>
                         <Select
                           onValueChange={(value) => {
-                            field.onChange(value);
+                            field.onChange(value)
                             // Reset city when province changes
-                            form.setValue("cityId", "");
+                            form.setValue("cityId", "")
                           }}
                           defaultValue={field.value}
                         >
@@ -344,10 +353,7 @@ export default function ReservationForm({
                           </SelectTrigger>
                           <SelectContent>
                             {provinces.map((province) => (
-                              <SelectItem
-                                key={province.provincia_id}
-                                value={province.provincia_id.toString()}
-                              >
+                              <SelectItem key={province.provincia_id} value={province.provincia_id.toString()}>
                                 {normalizeText(province.nombre)}
                               </SelectItem>
                             ))}
@@ -376,10 +382,7 @@ export default function ReservationForm({
                           </SelectTrigger>
                           <SelectContent>
                             {cities.map((city) => (
-                              <SelectItem
-                                key={city.ciudad_id}
-                                value={city.ciudad_id.toString()}
-                              >
+                              <SelectItem key={city.ciudad_id} value={city.ciudad_id.toString()}>
                                 {city.nombre}
                               </SelectItem>
                             ))}
@@ -402,10 +405,7 @@ export default function ReservationForm({
                       Requisitos especiales
                     </Label>
                     <FormControl>
-                      <Textarea
-                        placeholder="Ingrese cualquier requisito especial aquí"
-                        {...field}
-                      />
+                      <Textarea placeholder="Ingrese cualquier requisito especial aquí" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -445,43 +445,34 @@ export default function ReservationForm({
             <div className="flex justify-between">
               <span className="font-medium">Fecha inicio:</span>
               <span>
-                {form.watch("startDate")
-                  ? format(form.watch("startDate"), "PPP", { locale: es })
-                  : "No seleccionada"}
+                {form.watch("startDate") ? format(form.watch("startDate"), "PPP", { locale: es }) : "No seleccionada"}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="font-medium">Fecha fin:</span>
               <span>
-                {form.watch("endDate")
-                  ? format(form.watch("endDate"), "PPP", { locale: es })
-                  : "No seleccionada"}
+                {form.watch("endDate") ? format(form.watch("endDate"), "PPP", { locale: es }) : "No seleccionada"}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="font-medium">Duración:</span>
-              <span>
-                {form.watch("duration")
-                  ? `${form.watch("duration")} horas`
-                  : "No seleccionada"}
-              </span>
+              <span>{form.watch("duration") ? `${form.watch("duration")} horas` : "No seleccionada"}</span>
             </div>
             <div className="flex justify-between text-lg">
               <span className="font-bold">Total:</span>
               <span>
                 {minimumRange && maximumRange
-                  ? `$ ${minimumRange} - $ ${maximumRange}`
+                  ? `$ ${formatNumber(minimumRange)} - $ ${formatNumber(maximumRange)}`
                   : "No seleccionado"}
               </span>
             </div>
           </CardContent>
           <CardFooter className="flex justify-center">
-            <p className="text-sm text-gray-500">
-              El pago se realizará al finalizar el servicio.
-            </p>
+            <p className="text-sm text-gray-500">El pago se realizará al finalizar el servicio.</p>
           </CardFooter>
         </Card>
       </div>
     </div>
-  );
+  )
 }
+

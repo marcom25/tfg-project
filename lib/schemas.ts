@@ -63,7 +63,6 @@ export const CommentFormSchema = z.object({
 
 export type CommentFormSchemaType = z.infer<typeof CommentFormSchema>;
 
-
 export const ReservationFormSchema = z
   .object({
     startDate: z.date({
@@ -81,37 +80,51 @@ export const ReservationFormSchema = z
         required_error: "El rango mínimo es requerido",
         invalid_type_error: "Debe ser un número",
       })
-      .min(0, { message: "El valor mínimo debe ser mayor o igual a 0" }),
+      .min(1, { message: "El valor mínimo debe ser mayor o igual a 1" }),
     maximumRange: z.coerce
       .number({
         required_error: "El rango máximo es requerido",
         invalid_type_error: "Debe ser un número",
       })
-      .min(0, { message: "El valor máximo debe ser mayor o igual a 0" }),
-    duration: z.string({
-      required_error: "La duración es requerida",
-    }),
-    street: z.string().min(3, { message: "La calle debe tener al menos 3 caracteres" }),
+      .min(1, { message: "El valor máximo debe ser mayor o igual a 1" }),
+    duration: z
+      .string({
+        required_error: "La duración es requerida",
+      })
+      .refine((value) => value !== "", {
+        message: "La duración es requerida",
+      }),
+    street: z
+      .string()
+      .min(3, { message: "La calle debe tener al menos 3 caracteres" }),
     streetNumber: z.coerce
       .number({
         required_error: "El número es requerido",
         invalid_type_error: "Debe ser un número",
       })
       .min(1, { message: "El número debe ser mayor a 0" }),
-    provinceId: z.string({
-      required_error: "La provincia es requerida",
-    }),
-    cityId: z.string({
-      required_error: "La ciudad es requerida",
-    }),
-    requirements: z.string().max(500, { message: "Máximo 500 caracteres" }).optional(),
+    provinceId: z
+      .string({
+        required_error: "La provincia es requerida",
+      })
+      .refine((value) => value !== "", {
+        message: "La provincia es requerida",
+      }),
+    cityId: z
+      .string({
+        required_error: "La ciudad es requerida",
+      })
+      .refine((value) => value !== "", {
+        message: "La ciudad es requerida",
+      }),
+    requirements: z
+      .string()
+      .max(500, { message: "Máximo 500 caracteres" })
+      .optional(),
   })
   .refine((data) => data.maximumRange > data.minimumRange, {
     message: "El rango máximo debe ser mayor que el rango mínimo",
     path: ["maximumRange"],
-  })
+  });
 
-export type ReservationFormSchemaType = z.infer<typeof ReservationFormSchema>
-
-
-
+export type ReservationFormSchemaType = z.infer<typeof ReservationFormSchema>;

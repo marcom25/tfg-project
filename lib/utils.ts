@@ -32,3 +32,40 @@ export function normalizeText(text: string | undefined): string {
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 }
+
+export function formatNumber(value: number | string): string {
+  if (value === 0 || value === "" || value === undefined || value === null) return ""
+
+  // Convertir a string si es un número
+  const stringValue = typeof value === "number" ? value.toString() : value
+
+  // Si no hay valor, devolver cadena vacía
+  if (!stringValue) return ""
+
+  // Dividir en parte entera y decimal si hay coma
+  if (stringValue.includes(",")) {
+    const [intPart, decPart] = stringValue.split(",")
+    // Formatear la parte entera con puntos como separadores de miles
+    const formattedInt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+    return `${formattedInt},${decPart}`
+  }
+
+  // Si no hay coma, formatear todo como parte entera
+  return stringValue.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+}
+
+// Función para convertir de formato argentino a número
+export function unformatNumber(value: string): number {
+  if (!value) return 0
+
+  // Eliminar todos los puntos (separadores de miles)
+  const withoutThousandSeparator = value.replace(/\./g, "")
+
+  // Si hay coma decimal, convertir a formato JavaScript (punto decimal)
+  if (withoutThousandSeparator.includes(",")) {
+    return Number.parseFloat(withoutThousandSeparator.replace(",", "."))
+  }
+
+  // Si no hay coma decimal, es un entero
+  return Number.parseInt(withoutThousandSeparator, 10)
+}
