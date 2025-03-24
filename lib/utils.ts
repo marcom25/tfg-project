@@ -69,3 +69,16 @@ export function unformatNumber(value: string): number {
   // Si no hay coma decimal, es un entero
   return Number.parseInt(withoutThousandSeparator, 10)
 }
+
+export function getVariantFromState(state: string | undefined): "info" | "default" | "destructive" | "outline" | "secondary" | "success" | null | undefined {
+  switch (state) {
+    case "PENDING":
+      return "info"
+    case "ON_GOING":
+      return "success"
+    case "REJECTED":
+      return "destructive"
+    default:
+      return "default"
+  }
+}

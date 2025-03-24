@@ -151,8 +151,8 @@ model rol_usuario {
 
 model servicio {
   servicio_id     Int        @id @default(autoincrement())
-  proveedor_id    Int?       @unique 
-  cliente_id      Int?       @unique
+  proveedor_id    Int?       
+  cliente_id      Int?       
   nombre_servicio String     @db.VarChar(100)
   contratos       contrato[]
   cliente         cliente?   @relation(fields: [cliente_id], references: [cliente_id], onDelete: Cascade, onUpdate: NoAction)

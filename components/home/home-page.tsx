@@ -23,7 +23,14 @@ export default async function HomePage({
   from: string;
   to: string;
 }) {
-  const providers = await getFilteredProviders(query, sortBy, location, minRating, from, to);
+  const providers = await getFilteredProviders(
+    query,
+    sortBy,
+    location,
+    minRating,
+    from,
+    to
+  );
 
   if (!providers.length) {
     return <NoResults />;
@@ -60,11 +67,16 @@ export default async function HomePage({
                 <span>{provider.usuario?.direccion?.ciudad?.nombre}</span>
               </div>
               <div className="flex flex-wrap justify-center gap-2 mt-auto">
-                {provider.servicios.map((service) => (
+                {provider.servicios.slice(0, 2).map((service) => (
                   <Badge key={service.nombre_servicio} variant="secondary">
                     {service.nombre_servicio}
                   </Badge>
                 ))}
+                {provider.servicios.length > 2 && (
+                  <Badge variant="secondary" className="text-xs">
+                    +{provider.servicios.length - 2}
+                  </Badge>
+                )}
               </div>
             </CardContent>
           </Card>

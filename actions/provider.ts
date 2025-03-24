@@ -2,7 +2,6 @@
 
 import prisma from "@/lib/prisma";
 
-
 export async function getFilteredProviders(
   query: string,
   sortBy: string,
@@ -134,7 +133,7 @@ export async function getFilteredProviders(
 }
 
 export async function getProviderInfo(id: number) {
-   const provider = await prisma.proveedor.findFirstOrThrow({
+  const provider = await prisma.proveedor.findFirstOrThrow({
     where: {
       proveedor_id: id,
       usuario: {
@@ -165,7 +164,7 @@ export async function getProviderInfo(id: number) {
           comentarios: {
             include: {
               comentador: true,
-              puntuacion: true
+              puntuacion: true,
             },
           },
         },
@@ -173,6 +172,32 @@ export async function getProviderInfo(id: number) {
       servicios: true,
     },
   });
-    
+
   return provider;
+}
+
+export async function getProviderInfoFromUserId(userId: number) {
+  const provider = await prisma.proveedor.findFirstOrThrow({
+    where: {
+      usuario_id: Number(userId),
+    },
+    include: {
+      usuario: {
+        include: {
+          direccion: {
+            include: {
+              ciudad: {
+                include: {
+                  provincia: true,
+                },
+              },
+            },
+          },
+        },
+      },
+      servicios: true,
+    },
+  });
+
+  return provider; // No cambios necesarios aquí porque `findFirstOrThrow` lanza un error si no encuentra resultados.
 }

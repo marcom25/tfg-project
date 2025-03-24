@@ -32,20 +32,23 @@ export default async function Page({
   return (
     <div className="min-h-100">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Encuentra el cuidador ideal
-          </h2>
-          <p className="text-xl text-gray-600">
-            Cuidadores domiciliarios y niñeras confiables cerca de ti
-          </p>
-        </div>
+        {session?.user ? (
+          <HomePageClient />
+        ) : (
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Encuentra el cuidador ideal
+            </h2>
+            <p className="text-xl text-gray-600">
+              Cuidadores domiciliarios y niñeras confiables cerca de ti
+            </p>
+          </div>
+        )}
 
         <div className="flex flex-col sm:flex-row gap-4 mb-8">
           <SearchProvider />
           <FilterProvider />
         </div>
-        {session?.user && <HomePageClient />}
 
         <Suspense
           key={query + sortBy + location + minRating + from + to}

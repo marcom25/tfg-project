@@ -128,3 +128,82 @@ export const ReservationFormSchema = z
   });
 
 export type ReservationFormSchemaType = z.infer<typeof ReservationFormSchema>;
+
+export const UserProfileFormProviderSchema = z.object({
+  name: z.string().min(1, { message: "El nombre es requerido" }),
+  password: z
+      .string()
+      .min(6, { message: "La contraseña debe contener al menos 6 caracteres." })
+      .regex(/[a-z]/, {
+        message: "La contraseña debe contener al menos una letra minúscula.",
+      })
+      .regex(/[A-Z]/, {
+        message: "La contraseña debe contener al menos una letra mayúscula.",
+      })
+      .regex(/[0-9]/, {
+        message: "La contraseña debe contener al menos un número.",
+      })
+      .regex(/[^a-zA-Z0-9]/, {
+        message: "La contraseña debe contener al menos un carácter especial.",
+      })
+      .trim(),
+  lastname: z.string().min(1, { message: "El apellido es requerido" }),
+  email: z.string().email({ message: "Debe ser un correo válido" }),
+  phone: z.string().min(1, { message: "El teléfono es requerido" }),
+  experience: z.string().min(1, { message: "La experiencia es requerida" }),
+  street: z.string().min(1, { message: "La calle es requerida" }),
+  streetNumber: z.number().min(1, { message: "El número debe ser mayor a 0" }),
+  provinceId: z.string().min(1, { message: "La provincia es requerida" }),
+  cityId: z.string().min(1, { message: "La ciudad es requerida" }),
+  aboutMe: z.string().optional(), // Este campo no es requerido
+  services: z
+    .array(
+      z.object({
+        serviceName: z.string().min(1, { message: "El servicio es requerido" }),
+      })
+    )
+    .min(1, { message: "Debes agregar al menos un servicio" }),
+  avatarId: z.string().optional(),
+});
+
+export type UserProfileFormProviderSchemaType = z.infer<
+  typeof UserProfileFormProviderSchema
+>;
+
+export const UserProfileFormClientSchema = z.object({
+  name: z.string().min(1, { message: "El nombre es requerido" }),
+  password: z
+      .string()
+      .min(6, { message: "La contraseña debe contener al menos 6 caracteres." })
+      .regex(/[a-z]/, {
+        message: "La contraseña debe contener al menos una letra minúscula.",
+      })
+      .regex(/[A-Z]/, {
+        message: "La contraseña debe contener al menos una letra mayúscula.",
+      })
+      .regex(/[0-9]/, {
+        message: "La contraseña debe contener al menos un número.",
+      })
+      .regex(/[^a-zA-Z0-9]/, {
+        message: "La contraseña debe contener al menos un carácter especial.",
+      })
+      .trim(),
+  lastname: z.string().min(1, { message: "El apellido es requerido" }),
+  email: z.string().email({ message: "Debe ser un correo válido" }),
+  phone: z.string().min(1, { message: "El teléfono es requerido" }),
+  street: z.string().min(1, { message: "La calle es requerida" }),
+  streetNumber: z.number().min(1, { message: "El número debe ser mayor a 0" }),
+  provinceId: z.string().min(1, { message: "La provincia es requerida" }),
+  cityId: z.string().min(1, { message: "La ciudad es requerida" }),
+  aboutMe: z.string().optional(), // Este campo no es requerido
+  services: z
+    .array(
+      z.object({
+        serviceName: z.string().min(1, { message: "El servicio es requerido" }),
+      })
+    )
+    .min(1, { message: "Debes agregar al menos un servicio" }),
+  avatarId: z.string().optional(),
+})
+
+export type UserProfileFormClientSchemaType = z.infer<typeof UserProfileFormClientSchema>

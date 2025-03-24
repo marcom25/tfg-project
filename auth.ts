@@ -39,7 +39,7 @@ export const { auth, signIn, signOut } = NextAuth({
           if (!user) return null;
           const passwordsMatch = await argon2.verify(user.contrasena, password);
           if (passwordsMatch) {
-            const { contrasena: _, email, usuario_id, nombre, apellido, roles, imagen_perfil_id } = user;
+            const { contrasena, email, usuario_id, nombre, apellido, roles, imagen_perfil_id } = user;
             const role = roles[0].rol.nombre_rol as Roles;
                    
             return {

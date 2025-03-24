@@ -66,3 +66,30 @@ export async function createReservation(
     message: "Error al crear la reserva",
   };
 }
+
+
+export async function getContractsByClientId() {
+  const session = await auth();
+
+  const clientId = await getClientIdFromUserId(Number(session?.user.id));
+  const contracts = await prisma.contrato.findMany({
+    where: {
+      cliente_id: clientId,
+    },
+    include: {
+      proveedor: {
+        include: {
+          usuario: true,
+          servicios: true,
+        },
+      },
+      estado: true,
+      direccion: {
+        include: {
+          ciudad: true,
+        },
+      }
+    },
+  });
+  return contracts;
+}
