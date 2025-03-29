@@ -84,7 +84,7 @@ export default function ProfileFormClient({
 
   // Generate initial avatar seed
   const [avatarId, setAvatarId] = useState(
-    userData.usuario?.imagen_perfil_id ?? ""
+    userData.usuario.imagen_perfil_id ?? ""
   );
 
   // Map user services to string array
@@ -93,21 +93,21 @@ export default function ProfileFormClient({
   const form = useForm<UserProfileFormClientSchemaType>({
     resolver: zodResolver(UserProfileFormClientSchema),
     defaultValues: {
-      name: userData.usuario?.nombre || "",
-      lastname: userData.usuario?.apellido || "",
-      email: userData.usuario?.email || "",
-      phone: userData.usuario?.telefono || "",
+      name: userData.usuario.nombre || "",
+      lastname: userData.usuario.apellido || "",
+      email: userData.usuario.email || "",
+      phone: userData.usuario.telefono || "",
       services:
         userServices.length > 0
           ? userServices.map((service) => ({ serviceName: service }))
           : [{ serviceName: "Cuidado de ancianos" }],
-      street: userData.usuario?.direccion?.calle || "",
-      streetNumber: Number(userData.usuario?.direccion?.numero) || 0,
+      street: userData.usuario.direccion?.calle || "",
+      streetNumber: Number(userData.usuario.direccion?.numero) || 0,
       provinceId:
-        userData.usuario?.direccion?.ciudad.provincia?.provincia_id?.toString() ||
+        userData.usuario.direccion?.ciudad.provincia?.provincia_id?.toString() ||
         "",
-      cityId: userData.usuario?.direccion?.ciudad_id.toString() || "",
-      aboutMe: userData.usuario?.descripcion || "",
+      cityId: userData.usuario.direccion?.ciudad_id.toString() || "",
+      aboutMe: userData.usuario.descripcion || "",
       avatarId: avatarId,
       password: "",
     },

@@ -22,6 +22,7 @@ const providerRoutes = [
   ...userRoutes,
   "/clients",
   "/dashboard",
+  "searchClients",
   /^\/clients\/\d+\/info$/
 ];
 

@@ -7,7 +7,7 @@ import {useDebouncedCallback} from "use-debounce"
 
 const WAIT_BETWEEN_CHANGE = 300
 
-function SearchProvider() {
+function SearchBar() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -39,4 +39,4 @@ function SearchProvider() {
   );
 }
 
-export default SearchProvider;
+export default SearchBar;

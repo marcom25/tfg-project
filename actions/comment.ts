@@ -60,12 +60,75 @@ export async function submitCommentForProvider(
               usuario_id: userId,
             },
           },
-        }
-      }
+        },
+      },
     },
   });
 
   revalidatePath(`/providers/${providerId}`);
+}
+
+export async function submitCommentForClient(
+  data: CommentFormSchemaType,
+  clientId: number
+) {
+  const session = await auth();
+  const userId = Number(session?.user.id || 0);
+
+  const validContract = await prisma.contrato.findFirst({
+    where: {
+      OR: [
+        {
+          cliente: { usuario_id: clientId },
+          proveedor: { usuario_id: userId },
+          fecha_fin: { lte: new Date() },
+        },
+        {
+          proveedor: { usuario_id: clientId },
+          cliente: { usuario_id: userId },
+          fecha_fin: { lte: new Date() },
+        },
+      ],
+    },
+  });
+
+  if (!validContract) {
+    throw new Error("Debes tener un contrato finalizado para comentar");
+  }
+
+  const userClientId = await getUserIdFromClientId(clientId);
+  await prisma.comentario.create({
+    data: {
+      comentario: data.comment,
+      comentado: {
+        connect: {
+          usuario_id: userClientId,
+        },
+      },
+      comentador: {
+        connect: {
+          usuario_id: userId,
+        },
+      },
+      puntuacion: {
+        create: {
+          puntuacion: data.rating,
+          calificado: {
+            connect: {
+              usuario_id: userClientId,
+            },
+          },
+          calificador: {
+            connect: {
+              usuario_id: userId,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  revalidatePath(`/clients/${clientId}`);
 }
 
 export async function checkCommentPermission(

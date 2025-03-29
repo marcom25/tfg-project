@@ -16,9 +16,15 @@ import {
 import { useEffect, useState } from "react";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { CommentFormSchema, CommentFormSchemaType } from "@/lib/schemas";
-import { checkCommentPermission, submitCommentForProvider } from "@/actions/comment";
+import { checkCommentPermission, submitCommentForClient, submitCommentForProvider } from "@/actions/comment";
 
-function CommentSection({ providerId }: { providerId: number }) {
+function CommentSection({
+  providerId,
+  clientId,
+}: {
+  providerId?: number;
+  clientId?: number;
+}) {
   const [loading, setLoading] = useState(false);
   const [isAllowed, setIsAllowed] = useState(false);
   const form = useForm<CommentFormSchemaType>({
@@ -40,8 +46,11 @@ function CommentSection({ providerId }: { providerId: number }) {
   async function onSubmit(data: CommentFormSchemaType) {
     setLoading(true);
     try {
-      // Aquí iría tu server action para enviar el comentario
-      await submitCommentForProvider(data, providerId);
+      if (providerId) {
+        await submitCommentForProvider(data, providerId);
+      } else if (clientId) {
+        await submitCommentForClient(data, clientId); 
+      }
       form.reset();
       setSelectedRating(0);
     } catch (error) {
@@ -53,16 +62,22 @@ function CommentSection({ providerId }: { providerId: number }) {
 
   useEffect(() => {
     const checkPermission = async () => {
-      const result = await checkCommentPermission(providerId, "provider");
-      setIsAllowed(result.allowed);
+      if (providerId) {
+        const result = await checkCommentPermission(providerId, "provider");
+        setIsAllowed(result.allowed);
+      } else if (clientId) {
+        const result = await checkCommentPermission(clientId, "client");
+        setIsAllowed(result.allowed);
+      }
     };
     checkPermission();
-  }, [providerId]);
+  }, [providerId, clientId]);
 
   if (!isAllowed) {
     return (
       <div className="mt-8 text-center text-gray-500">
-        Solo puedes comentar después de finalizar un servicio con este proveedor
+        Solo puedes comentar después de finalizar un servicio con este{" "}
+        {providerId ? "proveedor" : "cliente"}
       </div>
     );
   }

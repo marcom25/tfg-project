@@ -1,13 +1,11 @@
 "use server";
 
-import HomePage from "@/components/home/home-page";
-import { auth } from "@/auth";
-import HomePageClient from "@/components/home/home-page-client";
 import SearchBar from "@/components/common/search-bar";
 import { Suspense } from "react";
 import { ProvidersGridSkeleton } from "@/components/skeletons/home-page-skeleton";
-import FilterOptions from "@/components/common/filter-options";
 
+import FilterOptions from "@/components/common/filter-options";
+import SearchClients from "@/components/searchClients/search-clients";
 
 export default async function Page({
   searchParams,
@@ -27,23 +25,18 @@ export default async function Page({
   const minRating = searchParams?.minRating || "0";
   const from = searchParams?.from || "";
   const to = searchParams?.to || "";
-  const session = await auth();
 
   return (
     <div className="min-h-100">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {session?.user ? (
-          <HomePageClient />
-        ) : (
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Encuentra el cuidador ideal
-            </h2>
-            <p className="text-xl text-gray-600">
-              Cuidadores domiciliarios y niñeras confiables cerca de ti
-            </p>
-          </div>
-        )}
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            Encuentra el cliente ideal
+          </h2>
+          <p className="text-xl text-gray-600">
+            Conecta con familias y personas que necesitan tus servicios
+          </p>
+        </div>
 
         <div className="flex flex-col sm:flex-row gap-4 mb-8">
           <SearchBar />
@@ -54,7 +47,7 @@ export default async function Page({
           key={query + sortBy + location + minRating + from + to}
           fallback={<ProvidersGridSkeleton />}
         >
-          <HomePage
+          <SearchClients
             query={query}
             sortBy={sortBy}
             location={location}
@@ -67,4 +60,3 @@ export default async function Page({
     </div>
   );
 }
-

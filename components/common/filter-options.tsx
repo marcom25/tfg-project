@@ -29,7 +29,7 @@ interface Filters {
   minRating: string;
 }
 
-function FilterProvider() {
+function FilterOptions() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -227,4 +227,4 @@ function FilterProvider() {
   );
 }
 
-export default FilterProvider;
+export default FilterOptions;
