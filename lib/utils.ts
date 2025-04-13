@@ -82,3 +82,20 @@ export function getVariantFromState(state: string | undefined): "info" | "defaul
       return "default"
   }
 }
+
+export function getStateMessage(state: string | undefined): string {
+  switch (state) {
+    case "PENDING":
+      return "Pendiente"
+    case "ON_GOING":
+      return "En Progreso"
+    case "REJECTED":
+      return "Rechazado"
+    case "FINISHED":
+      return "Finalizado"
+    case "ACCEPTED":
+      return "Aceptado"
+    default:
+      return ""
+  }
+}

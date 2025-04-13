@@ -1,4 +1,5 @@
 import { Roles } from "@/next-auth";
+import { Decimal } from "@prisma/client/runtime/library";
 
 export interface UserDB {
   id: string;
@@ -22,10 +23,17 @@ export enum ContractStates {
   PENDING = 1,
   ON_GOING = 2,
   REJECTED = 3,
+  FINISHED = 4,
 }
 
 export enum DecisionStates {
   ACCEPTED = "ACCEPTED",
   REJECTED = "REJECTED",
   PENDING = "PENDING",
+}
+
+export interface DashboardEarnings {
+  total: number | Decimal;
+  monthly: number | Decimal;
+  pending: number | Decimal;
 }

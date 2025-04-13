@@ -30,3 +30,8 @@ Si no quiere instalar el proyecto, puede verlo funcionando [aquí](https://tfg-p
 ### Credenciales
 Usuario cliente: client@gmail.com Client1!
 Usuario proveedor: provider@gmail.com Provider1!
+
+
+### .env
+DATABASE_URL="database_url?connection_limit=5"
+AUTH_SECRET="fX6HavrIruKufc5xNkrH50OksdDoniIFL+prBUOncsE="

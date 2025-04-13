@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { MapPin } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
-import { getVariantFromState } from "@/lib/utils"
+import { getStateMessage, getVariantFromState } from "@/lib/utils"
 import { getContractsByClientId } from "@/actions/contract"
 
 export async function ContractCarousel() {
@@ -41,7 +41,7 @@ export async function ContractCarousel() {
                         variant={getVariantFromState(contract.estado?.estado)}
                         className="text-xs px-2 py-0.5 mt-0.5"
                       >
-                        {contract.estado?.estado}
+                        {getStateMessage(contract.estado?.estado)}
                       </Badge>
                     </div>
 
