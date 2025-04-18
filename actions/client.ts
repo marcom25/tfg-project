@@ -202,3 +202,15 @@ export async function getClientInfoFromUserId(userId: number) {
 
   return client; // No cambios necesarios aquí porque `findFirstOrThrow` lanza un error si no encuentra resultados.
 }
+
+export async function getAllUsersFromClients() {
+  const clients = await prisma.cliente.findMany({
+    include: {
+      usuario: true
+    }
+  })
+
+  const users = clients.map((client) => (client.usuario))
+
+  return users
+}

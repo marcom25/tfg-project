@@ -1,4 +1,5 @@
 "use server";
+import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
 
 export async function getUserIdFromProviderId(providerId: number) {
@@ -40,3 +41,14 @@ export async function getProviderIdFromUserId(userId: number) {
 
   return provider?.proveedor_id;
 }
+
+export async function getLoggedUser() {
+  const session = await auth();
+  const user = await prisma.usuario.findFirst({
+    where: {
+      usuario_id: Number(session?.user.id),
+    },
+  })
+  return user
+}
+export type LoggedUser = Awaited<ReturnType<typeof getLoggedUser>>

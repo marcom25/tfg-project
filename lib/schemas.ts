@@ -207,3 +207,8 @@ export const UserProfileFormClientSchema = z.object({
 })
 
 export type UserProfileFormClientSchemaType = z.infer<typeof UserProfileFormClientSchema>
+
+export const MessageFormSchema = z.object({
+  message: z.string().min(1, { message: "El mensaje no puede estar vacío" }),
+})
+export type MessageFormSchemaType = z.infer<typeof MessageFormSchema>

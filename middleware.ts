@@ -23,17 +23,15 @@ const providerRoutes = [
   "/clients",
   "/dashboard",
   "searchClients",
-  /^\/clients\/\d+\/info$/
+  /^\/clients\/\d+\/info$/,
 ];
 
-
-
 export default middleware((req) => {
+
   const { nextUrl, auth } = req;
   const isLoggedIn = !!auth?.user;
 
   console.log(auth?.user);
-  
 
   if (authRoutes.includes(nextUrl.pathname) && isLoggedIn) {
     if (auth?.user.role === "CLIENT") {
@@ -42,7 +40,7 @@ export default middleware((req) => {
       return NextResponse.redirect(new URL("/dashboard", nextUrl));
     }
   }
-  
+
   if (
     nextUrl.pathname !== "/profile" &&
     (auth?.user.name === null || auth?.user.lastname === null)
@@ -79,3 +77,4 @@ export const config = {
     "/((?!api|_next/static|_next/image|images/.*|.*\\.png$).*)",
   ],
 };
+

@@ -99,3 +99,10 @@ export function getStateMessage(state: string | undefined): string {
       return ""
   }
 }
+
+
+export function humanizeDate(date: Date): string {
+  const hours = date.getHours().toString().padStart(2, '0'); // Asegurar formato de 2 dígitos
+  const minutes = date.getMinutes().toString().padStart(2, '0'); // Asegurar formato de 2 dígitos
+  return `${hours}:${minutes}`; // Formato HH:mm
+}

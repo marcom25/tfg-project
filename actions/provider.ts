@@ -201,3 +201,15 @@ export async function getProviderInfoFromUserId(userId: number) {
 
   return provider; // No cambios necesarios aquí porque `findFirstOrThrow` lanza un error si no encuentra resultados.
 }
+
+export async function getAllUsersFromProviders() {
+  const providers = await prisma.proveedor.findMany({
+    include: {
+      usuario: true
+    }
+  })
+
+  const users = providers.map((provider) => (provider.usuario))
+
+  return users
+}
