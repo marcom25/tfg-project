@@ -24,6 +24,7 @@ export enum ContractStates {
   ON_GOING = 2,
   REJECTED = 3,
   FINISHED = 4,
+  ACCEPTED = 5,
 }
 
 export enum DecisionStates {

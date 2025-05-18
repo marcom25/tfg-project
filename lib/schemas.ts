@@ -212,3 +212,14 @@ export const MessageFormSchema = z.object({
   message: z.string().min(1, { message: "El mensaje no puede estar vacío" }),
 })
 export type MessageFormSchemaType = z.infer<typeof MessageFormSchema>
+
+export const AgreementFormSchema = z.object({
+  amount: z.coerce
+      .number({
+        required_error: "El monto es requerido",
+        invalid_type_error: "Debe ser un número",
+      })
+      .min(1, { message: "El monto debe ser mayor o igual a 1" }),
+})
+
+export type AgreementFormSchemaType = z.infer<typeof AgreementFormSchema>

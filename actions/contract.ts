@@ -4,7 +4,8 @@ import { auth } from "@/auth";
 import { ContractStates, DashboardEarnings, DecisionStates } from "@/lib/definitions";
 import prisma from "@/lib/prisma";
 import { ReservationFormSchemaType } from "@/lib/schemas";
-import { getClientIdFromUserId } from "./users";
+import { getClientIdFromUserId, getProviderIdFromUserId } from "./users";
+import { revalidatePath } from "next/cache";
 
 export type Contract = Awaited<ReturnType<typeof getContractsByProivderId>>[number];
 
@@ -355,3 +356,144 @@ export async function getContractsByDateRange(date: Date) {
   }));
 }
 
+export async function getConctractById(contractId: number) {
+  const session = await auth();
+  let userId
+  if (session?.user.role !== "PROVIDER") {
+    userId = await getClientIdFromUserId(Number(session?.user.id));
+  } else {
+    userId = await getProviderIdFromUserId(Number(session?.user.id));
+  }
+  const contract = await prisma.contrato.findUnique({
+    where: {
+      contrato_id: contractId,
+      OR: [
+        {
+          proveedor_id: Number(userId),
+        },
+        {
+          cliente_id: Number(userId),
+        },
+      ]
+    },
+    include: {
+      cliente: {
+        include: {
+          usuario: true,
+          servicios: true,
+        },
+      },
+      rango_cliente: true,
+      proveedor: {
+        include: {
+          usuario: true,
+          servicios: true,
+        },
+      },
+      estado: true,
+      direccion: {
+        include: {
+          ciudad: {
+            include: {
+              provincia: true,
+            }
+          },
+         
+        },
+      }
+    },
+  });
+
+  return contract;
+}
+
+export async function updateContractDecisionClient(
+  contractId: number,
+  decision: DecisionStates
+) {
+  // Actualizar la decisión del cliente y obtener ambas decisiones y fecha de inicio
+  const updated = await prisma.contrato.update({
+    where: { contrato_id: contractId },
+    data: { decision_cliente: decision },
+    select: {
+      decision_cliente: true,
+      decision_proveedor: true,
+      fecha_inicio: true,
+    },
+  });
+
+  // Si ambas decisiones ya no están en PENDING
+  if (
+    updated.decision_cliente !== DecisionStates.PENDING &&
+    updated.decision_proveedor !== DecisionStates.PENDING
+  ) {
+    let newState: ContractStates;
+    if (
+      updated.decision_cliente === DecisionStates.REJECTED ||
+      updated.decision_proveedor === DecisionStates.REJECTED
+    ) {
+      newState = ContractStates.REJECTED;
+    } else {
+      // Ambas son ACCEPTED, chequear fecha de inicio
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const startDate = new Date(updated.fecha_inicio);
+      startDate.setHours(0, 0, 0, 0);
+      newState =
+        startDate <= today ? ContractStates.ON_GOING : ContractStates.ACCEPTED;
+    }
+
+    await prisma.contrato.update({
+      where: { contrato_id: contractId },
+      data: { estado_id: newState },
+    });
+  }
+
+  revalidatePath(`/agreement/${contractId}`);
+}
+
+export async function updateContractDecisionProvider(
+  contractId: number,
+  decision: DecisionStates,
+  amount: number
+) {
+  // Actualizar la decisión del proveedor y el monto, y obtener ambas decisiones y fecha de inicio
+  const updated = await prisma.contrato.update({
+    where: { contrato_id: contractId },
+    data: { decision_proveedor: decision, monto_acordado: amount },
+    select: {
+      decision_cliente: true,
+      decision_proveedor: true,
+      fecha_inicio: true,
+    },
+  });
+
+  // Si ambas decisiones ya no están en PENDING
+  if (
+    updated.decision_cliente !== DecisionStates.PENDING &&
+    updated.decision_proveedor !== DecisionStates.PENDING
+  ) {
+    let newState: ContractStates;
+    if (
+      updated.decision_cliente === DecisionStates.REJECTED ||
+      updated.decision_proveedor === DecisionStates.REJECTED
+    ) {
+      newState = ContractStates.REJECTED;
+    } else {
+      // Ambas son ACCEPTED, chequear fecha de inicio
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const startDate = new Date(updated.fecha_inicio);
+      startDate.setHours(0, 0, 0, 0);
+      newState =
+        startDate <= today ? ContractStates.ON_GOING : ContractStates.ACCEPTED;
+    }
+
+    await prisma.contrato.update({
+      where: { contrato_id: contractId },
+      data: { estado_id: newState },
+    });
+  }
+
+  revalidatePath(`/agreement/${contractId}`);
+}

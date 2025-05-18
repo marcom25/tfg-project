@@ -36,6 +36,7 @@ export const LoadingButton = React.forwardRef<
         onClick={onClick}
         disabled={isLoading}
         className={cn(buttonVariants({ variant, size, className }))}
+        variant={variant}
         {...props}
       >
         {isLoading ? (

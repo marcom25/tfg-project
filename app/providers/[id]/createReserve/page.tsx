@@ -1,7 +1,7 @@
 
 import { getProvinces } from "@/actions/location"
 import { getProviderInfo } from "@/actions/provider"
-import ReservationForm from "@/components/createReserve/create-reserve-form"
+import ReservationForm from "@/components/agreement/create-reserve-form"
 
 
 type ProviderReserveProps = {
