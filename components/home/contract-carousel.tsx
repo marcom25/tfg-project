@@ -24,7 +24,7 @@ export async function ContractCarousel() {
               key={contract.contrato_id}
               className="pl-2 md:pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
             >
-              <Link href={`/providers/${contract.proveedor_id}/info`}>
+              <Link href={`/agreement/${contract.contrato_id}`}>
                 <Card className="overflow-hidden h-full">
                   <CardContent className="p-3 sm:p-4 flex flex-col items-center justify-between h-[220px]">
                     <div className="flex flex-col items-center gap-1">
@@ -51,14 +51,14 @@ export async function ContractCarousel() {
                     </div>
 
                     <div className="flex flex-wrap justify-center gap-1 mt-1">
-                      {contract.proveedor.servicios.slice(0, 2).map((service) => (
+                      {contract.proveedor.servicios.slice(0, 1).map((service) => (
                         <Badge key={service.nombre_servicio}  variant="secondary" className="text-xs">
                           {service.nombre_servicio}
                         </Badge>
                       ))}
-                      {contract.proveedor.servicios.length > 2 && (
+                      {contract.proveedor.servicios.length > 1 && (
                         <Badge variant="secondary" className="text-xs">
-                          +{contract.proveedor.servicios.length - 2}
+                          +{contract.proveedor.servicios.length - 1}
                         </Badge>
                       )}
                     </div>

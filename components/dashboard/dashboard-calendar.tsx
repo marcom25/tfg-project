@@ -8,7 +8,7 @@ import { CalendarIcon, ClockIcon } from "lucide-react";
 import { Calendar } from "../ui/calendar";
 import {
   getContractsByDateRange,
-  getContractsByProivderId,
+  getContractsByProviderId,
 } from "@/actions/contract";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { Badge } from "../ui/badge";
@@ -32,7 +32,7 @@ const DashboardCalendar = React.memo(() => {
   useEffect(() => {
     const fetchContracts = async () => {
       try {
-        const contratos = await getContractsByProivderId();
+        const contratos = await getContractsByProviderId();
         setContractsLength(contratos.length);
       } catch (error) {
         console.error("Error fetching contracts:", error);

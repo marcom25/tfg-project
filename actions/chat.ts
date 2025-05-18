@@ -5,6 +5,8 @@ import prisma from "@/lib/prisma";
 import { getAllUsersFromClients } from "./client";
 import { getAllUsersFromProviders } from "./provider";
 import { MessageFormSchemaType } from "@/lib/schemas";
+import { getUserIdFromClientId, getUserIdFromProviderId } from "./users";
+import { redirect } from "next/navigation";
 
 
 export async function getConversations() {
@@ -158,3 +160,51 @@ export async function getUsers() {
   return filteredUsers;
 }
 export type GetUsers = Awaited<ReturnType<typeof getUsers>>;
+
+export async function redirectToConversation({
+  clientId,
+  providerId,
+}: { clientId?: number; providerId?: number }) {
+  const session = await auth();
+  if (!session?.user.id) throw new Error("No autenticado");
+
+  // Obtener el userId del cliente o proveedor
+  let otherUserId: number | undefined;
+  if (clientId) {
+    otherUserId = await getUserIdFromClientId(clientId)
+  } else if (providerId) {
+    otherUserId = await getUserIdFromProviderId(providerId);
+  }
+
+  if (!otherUserId) throw new Error("Usuario no encontrado");
+
+  // Buscar si ya existe una conversación
+  const existingConversation = await prisma.conversacion.findFirst({
+    where: {
+      OR: [
+        {
+          usuario_remitente_id: Number(session.user.id),
+          usuario_receptor_id: otherUserId,
+        },
+        {
+          usuario_remitente_id: otherUserId,
+          usuario_receptor_id: Number(session.user.id),
+        },
+      ],
+    },
+  });
+
+  if (existingConversation) {
+    redirect(`/chat?conversation=${existingConversation.conversacion_id}`)
+  }
+
+  // Crear nueva conversación
+  const newConversation = await prisma.conversacion.create({
+    data: {
+      usuario_remitente_id: Number(session.user.id),
+      usuario_receptor_id: otherUserId,
+    },
+  });
+
+  redirect(`/chat?conversation=${newConversation.conversacion_id}`);
+}

@@ -8,7 +8,7 @@ import {
   CarouselPrevious,
 } from "../ui/carousel";
 
-import {  getContractsByProivderId } from "@/actions/contract";
+import {  getContractsByProviderId } from "@/actions/contract";
 import { ContractStates } from "@/lib/definitions";
 import ContractCard from "./contract-card";
 
@@ -16,7 +16,8 @@ import ContractCard from "./contract-card";
 
 
 async function DashboardContracts() {
-  const res = await getContractsByProivderId();
+  const res = await getContractsByProviderId();
+  console.log(res);
   
 
   const pendingContracts = res.filter(
@@ -51,9 +52,15 @@ async function DashboardContracts() {
               </h3>
               <Carousel className="w-full relative">
                 <CarouselContent>
-                  {pendingContracts.map((pendingContract) => (
-                    <ContractCard key={pendingContract.contrato_id} contract={pendingContract} />
-                  ))}
+                  {pendingContracts.length === 0 ? (
+                    <div className="text-center w-full py-8 text-gray-500">
+                      No tienes peticiones de servicio pendientes.
+                    </div>
+                  ) : (
+                    pendingContracts.map((pendingContract) => (
+                      <ContractCard key={pendingContract.contrato_id} contract={pendingContract} />
+                    ))
+                  )}
                 </CarouselContent>
                 <CarouselPrevious className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-2" />
                 <CarouselNext className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-2" />
@@ -66,9 +73,15 @@ async function DashboardContracts() {
             </h3>
             <Carousel className="w-full relative">
               <CarouselContent>
-                {contracts.map((contract) => (
-                  <ContractCard key={contract.contrato_id} contract={contract} />
-                ))}
+                {contracts.length === 0 ? (
+                  <div className="text-center w-full py-8 text-gray-500">
+                    No tienes contratos confirmados.
+                  </div>
+                ) : (
+                  contracts.map((contract) => (
+                    <ContractCard key={contract.contrato_id} contract={contract} />
+                  ))
+                )}
               </CarouselContent>
               <CarouselPrevious className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-2" />
               <CarouselNext className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-2" />

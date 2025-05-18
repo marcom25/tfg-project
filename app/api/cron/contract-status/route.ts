@@ -25,5 +25,16 @@ export async function GET() {
     data: { estado_id: ContractStates.FINISHED },
   });
 
+  await prisma.contrato.updateMany({
+    where: {
+      fecha_fin: { lte: new Date() },
+      estado_id: { in: [ContractStates.PENDING, ContractStates.ACCEPTED, ContractStates.ON_GOING] },
+      OR: [
+        { decision_cliente: { not: DecisionStates.ACCEPTED } },
+        { decision_proveedor: { not: DecisionStates.ACCEPTED } },
+      ],
+    },
+    data: { estado_id: ContractStates.REJECTED },
+  });
   return NextResponse.json({ ok: true });
 }

@@ -1,4 +1,5 @@
 import AgreementInfo from "@/components/agreement/agreement-info";
+import AgreementSkeleton from "@/components/skeletons/agreement-skeleton";
 import React, { Suspense } from "react";
 
 
@@ -12,7 +13,7 @@ export default async function Page({ params }: AgreementInfoProps) {
   const id = (await params).id
   
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<AgreementSkeleton />}>
       <AgreementInfo contractId={Number(id)} />
     </Suspense>
   );

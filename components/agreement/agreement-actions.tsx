@@ -34,6 +34,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AgreementFormSchema, AgreementFormSchemaType } from "@/lib/schemas";
 import { formatNumber, getStateMessage, unformatNumber } from "@/lib/utils";
+import { redirectToConversation } from "@/actions/chat";
+import Link from "next/link";
 
 export default function AgreementActions({
   myDecision,
@@ -43,6 +45,7 @@ export default function AgreementActions({
   maxRange,
   contractState,
   amountAgreed,
+  urlToRedirect,
 }: {
   myDecision: string | null | undefined;
   contractId: number;
@@ -51,6 +54,7 @@ export default function AgreementActions({
   maxRange: number;
   contractState: string | undefined;
   amountAgreed: number | undefined;
+  urlToRedirect: string;
 }) {
   const [isLoadingAccept, setIsLoadingAccept] = useState(false);
   const [isLoadingPending, setIsLoadingPending] = useState(false);
@@ -190,7 +194,7 @@ export default function AgreementActions({
         )}
         {contractState === "PENDING" && (
           <>
-            {!amountAgreed && (
+            {!amountAgreed && userRole === "PROVIDER" && (
               <FormField
                 control={form.control}
                 name="amount"
@@ -291,11 +295,14 @@ export default function AgreementActions({
         )}
 
         <Button
+          asChild
           variant="outline"
           className="w-full py-5 text-base border-blue-200 hover:bg-blue-50 hover:text-blue-700"
         >
-          <MessageSquare className="mr-2 h-5 w-5" />
-          Enviar Mensaje
+          <Link href={urlToRedirect} className="flex items-center justify-center">
+            <MessageSquare className="mr-2 h-5 w-5" />
+            Enviar Mensaje
+          </Link>
         </Button>
       </form>
     </Form>

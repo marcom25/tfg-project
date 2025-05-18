@@ -7,7 +7,7 @@ import { ReservationFormSchemaType } from "@/lib/schemas";
 import { getClientIdFromUserId, getProviderIdFromUserId } from "./users";
 import { revalidatePath } from "next/cache";
 
-export type Contract = Awaited<ReturnType<typeof getContractsByProivderId>>[number];
+export type Contract = Awaited<ReturnType<typeof getContractsByProviderId>>[number];
 
 export async function createReservation(
   id: number,
@@ -96,20 +96,14 @@ export async function getContractsByClientId() {
   return contracts;
 }
 
-export async function getContractsByProivderId() {
+export async function getContractsByProviderId() {
   const session = await auth();
 
-  const providerId = await getClientIdFromUserId(Number(session?.user.id));
+  const providerId = await getProviderIdFromUserId(Number(session?.user.id));
+  
   const contracts = await prisma.contrato.findMany({
     where: {
       proveedor_id: providerId,
-      estado: {
-        estado_id: {
-          in: [ContractStates.PENDING, ContractStates.ON_GOING, ContractStates.FINISHED],
-        },
-      },
-      decision_cliente: DecisionStates.ACCEPTED,
-      decision_proveedor: DecisionStates.ACCEPTED,
     },
     include: {
       cliente: {
@@ -131,34 +125,6 @@ export async function getContractsByProivderId() {
     ...contract,
     monto_acordado: contract.monto_acordado?.toNumber() ?? null,
   }));
-}
-
-export async function getContractById(id: number) {
-  const contract = await prisma.contrato.findUnique({
-    where: {
-      contrato_id: id,
-    },
-    include: {
-      proveedor: {
-        include: {
-          usuario: true,
-          servicios: true,
-        },
-      },
-      cliente: {
-        include: {
-          usuario: true,
-        },
-      },
-      estado: true,
-      direccion: {
-        include: {
-          ciudad: true,
-        },
-      },
-    },
-  });
-  return contract;
 }
 
 export async function calculateEarningnsByProviderId(): Promise<DashboardEarnings> {
@@ -364,6 +330,7 @@ export async function getConctractById(contractId: number) {
   } else {
     userId = await getProviderIdFromUserId(Number(session?.user.id));
   }
+  
   const contract = await prisma.contrato.findUnique({
     where: {
       contrato_id: contractId,

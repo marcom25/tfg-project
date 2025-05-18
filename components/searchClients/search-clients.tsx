@@ -67,14 +67,14 @@ export default async function SearchClients({
                 <span>{client.usuario?.direccion?.ciudad?.nombre}</span>
               </div>
               <div className="flex flex-wrap justify-center gap-2 mt-auto">
-                {client.servicios.slice(0, 2).map((service) => (
+                {client.servicios.slice(0, 1).map((service) => (
                   <Badge key={service.nombre_servicio} variant="secondary">
                     {service.nombre_servicio}
                   </Badge>
                 ))}
-                {client.servicios.length > 2 && (
+                {client.servicios.length > 1 && (
                   <Badge variant="secondary" className="text-xs">
-                    +{client.servicios.length - 2}
+                    +{client.servicios.length - 1}
                   </Badge>
                 )}
               </div>

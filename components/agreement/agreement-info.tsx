@@ -98,6 +98,15 @@ export default async function AgreementInfo({
 
   const agreementStatus = contract?.estado?.estado;
 
+  const getUrlToRedirect = () => {
+    if (session?.user.role === "CLIENT") {
+      return `/chat/redirect?providerId=${contract?.proveedor_id}`;
+    } else if (session?.user.role === "PROVIDER") {
+      return `/chat/redirect?clientId=${contract?.cliente_id}`;
+    }
+    return "";
+  };
+
   return (
     <section className="max-w-7xl mx-auto">
       <div className="px-4 py-6 sm:px-0">
@@ -169,23 +178,23 @@ export default async function AgreementInfo({
                     </p>
                   </div>
                 </div>
-                {userRole === "CLIENT" && (
-                  <div className="flex items-start gap-3">
-                    <DollarSign className="h-5 w-5 text-blue-500 mt-0.5" />
-                    <div>
-                      <p className="text-sm text-gray-500">Rango monetario</p>
-                      <p className="font-medium">
-                        {contract?.rango_cliente
-                          ? `$${formatNumber(
-                              contract.rango_cliente.minimo?.toNumber() || 0
-                            )} - $${formatNumber(
-                              contract.rango_cliente.maximo?.toNumber() || 0
-                            )}`
-                          : "N/A"}
-                      </p>
-                    </div>
+
+                <div className="flex items-start gap-3">
+                  <DollarSign className="h-5 w-5 text-blue-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-gray-500">Rango monetario</p>
+                    <p className="font-medium">
+                      {contract?.rango_cliente
+                        ? `$${formatNumber(
+                            contract.rango_cliente.minimo?.toNumber() || 0
+                          )} - $${formatNumber(
+                            contract.rango_cliente.maximo?.toNumber() || 0
+                          )}`
+                        : "N/A"}
+                    </p>
                   </div>
-                )}
+                </div>
+
                 <div className="flex items-start gap-3 col-span-full">
                   <MapPin className="h-5 w-5 text-blue-500 mt-0.5" />
                   <div>
@@ -194,7 +203,8 @@ export default async function AgreementInfo({
                       {contract?.direccion
                         ? `${contract.direccion.calle} ${contract.direccion.numero}, `
                         : "N/A"}
-                      {contract?.direccion?.ciudad?.nombre || "N/A"}{", "}
+                      {contract?.direccion?.ciudad?.nombre || "N/A"}
+                      {", "}
                       {normalizeText(
                         contract?.direccion?.ciudad?.provincia?.nombre || "N/A"
                       )}
@@ -285,6 +295,7 @@ export default async function AgreementInfo({
                 userRole={userRole}
                 minRange={contract?.rango_cliente?.minimo?.toNumber() || 0}
                 maxRange={contract?.rango_cliente?.maximo?.toNumber() || 0}
+                urlToRedirect={getUrlToRedirect()}
               />
             </CardFooter>
           </Card>

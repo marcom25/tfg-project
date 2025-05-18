@@ -67,14 +67,14 @@ export default async function HomePage({
                 <span>{provider.usuario?.direccion?.ciudad?.nombre}</span>
               </div>
               <div className="flex flex-wrap justify-center gap-2 mt-auto">
-                {provider.servicios.slice(0, 2).map((service) => (
+                {provider.servicios.slice(0, 1).map((service) => (
                   <Badge key={service.nombre_servicio} variant="secondary">
                     {service.nombre_servicio}
                   </Badge>
                 ))}
-                {provider.servicios.length > 2 && (
+                {provider.servicios.length > 1 && (
                   <Badge variant="secondary" className="text-xs">
-                    +{provider.servicios.length - 2}
+                    +{provider.servicios.length - 1}
                   </Badge>
                 )}
               </div>

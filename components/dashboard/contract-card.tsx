@@ -33,7 +33,7 @@ function ContractCard({ contract }: { contract: Contract }) {
       key={contract.contrato_id}
       className="flex-shrink-0 w-48 max-w-[375px]"
     >
-      <Link href={`/contracts/${contract.contrato_id}`}>
+      <Link href={`/agreement/${contract.contrato_id}`}>
       <Card className={`h-full border ${colorClasses}`}>
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center justify-between text-lg">
@@ -80,14 +80,14 @@ function ContractCard({ contract }: { contract: Contract }) {
             {contract.direccion?.ciudad?.nombre}
           </p>
           <div className="w-fit mt-2">
-            {contract.cliente.servicios.slice(0, 2).map((service: servicio) => (
+            {contract.cliente.servicios.slice(0, 1).map((service: servicio) => (
               <Badge key={service.nombre_servicio} variant="default">
                 {service.nombre_servicio}
               </Badge>
             ))}
-            {contract.cliente.servicios.length > 2 && (
+            {contract.cliente.servicios.length > 1 && (
               <Badge variant="default" className="text-xs">
-                +{contract.cliente.servicios.length - 2}
+                +{contract.cliente.servicios.length - 1}
               </Badge>
             )}
           </div>

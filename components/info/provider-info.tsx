@@ -14,16 +14,12 @@ import {
   MailIcon,
   NotepadText,
   MapPinIcon,
+  Phone,
 } from "lucide-react";
 import Link from "next/link";
 import { getProviderInfo } from "@/actions/provider";
 import { getRating, normalizeText } from "@/lib/utils";
 import CommentSection from "@/components/info/comment-section";
-import {
-  getUserIdFromClientId,
-  getUserIdFromProviderId,
-} from "@/actions/users";
-import { getQualifications } from "@/actions/qualifications";
 
 export default async function ProviderInfo({ id }: { id: number }) {
   const provider = await getProviderInfo(id);
@@ -63,12 +59,14 @@ export default async function ProviderInfo({ id }: { id: number }) {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">
-            <div>
-              <h3 className="font-semibold mb-2">Descripción</h3>
-              <p className="text-sm text-gray-600">
-                {provider.usuario.descripcion}
-              </p>
-            </div>
+            {provider.usuario.descripcion && (
+              <div>
+                <h3 className="font-semibold mb-2">Descripción</h3>
+                <p className="text-sm text-gray-600">
+                  {provider.usuario.descripcion}
+                </p>
+              </div>
+            )}
             <div>
               <h3 className="font-semibold mb-2">Habilidades</h3>
               <div className="flex flex-wrap gap-2">
@@ -91,19 +89,38 @@ export default async function ProviderInfo({ id }: { id: number }) {
                 </span>
               </div>
             </div>
+            {provider.usuario.telefono && (
+              <div className="mt-4">
+                <h3 className="font-semibold mb-2">Teléfono</h3>
+                <div className="flex items-center">
+                  <Phone className="w-4 h-4 mr-2" />
+                  <span className="text-sm text-gray-600">
+                    {provider.usuario.telefono}
+                  </span>
+                </div>
+              </div>
+            )}
             <div>
               <h3 className="font-semibold mb-2">Contacto</h3>
               <div className="flex items-center gap-4">
                 <Button variant="outline" size="sm">
-                  <MessageCircleIcon className="w-4 h-4 mr-2" />
-                  Enviar mensaje
+                  <Link
+                    className="flex items-center"
+                    href={`/chat/redirect?providerId=${provider.proveedor_id}`}
+                  >
+                    <MessageCircleIcon className="w-4 h-4 mr-2" />
+                    Enviar mensaje
+                  </Link>
                 </Button>
                 <Button variant="outline" size="sm">
                   <MailIcon className="w-4 h-4 mr-2" />
                   Enviar email
                 </Button>
                 <Button variant="outline" size="sm">
-                  <Link href={`/providers/${id}/createReserve`} className="flex">
+                  <Link
+                    href={`/providers/${id}/createReserve`}
+                    className="flex"
+                  >
                     <NotepadText className="w-4 h-4 mr-2" />
                     Reservar turno
                   </Link>
@@ -130,14 +147,14 @@ export default async function ProviderInfo({ id }: { id: number }) {
                     {comment.comentador.nombre} {comment.comentador.apellido}
                   </span>
                   <div className="flex items-center">
-                    {comment.puntuacion 
+                    {comment.puntuacion
                       ? [...Array(5)].map((_, i) => (
                           <StarIcon
                             key={i}
                             className={`w-4 h-4 ${
                               i <
                               (comment.puntuacion &&
-                                comment.puntuacion.puntuacion
+                              comment.puntuacion.puntuacion
                                 ? comment.puntuacion.puntuacion
                                 : 0)
                                 ? "text-yellow-400"
@@ -159,3 +176,4 @@ export default async function ProviderInfo({ id }: { id: number }) {
     </div>
   );
 }
+

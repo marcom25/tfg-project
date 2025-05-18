@@ -1,3 +1,4 @@
+"use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -28,12 +29,11 @@ const ChatContext = createContext<ChatContextType | undefined>(undefined);
 export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-   const { replace } = useRouter();
+  const { replace } = useRouter();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
-  const [selectedConversation, setSelectedConversation] = useState<
-    ConversationDetails | null
-  >(null);
+  const conversationId = searchParams.get("conversation");
+  const [selectedConversation, setSelectedConversation] =
+    useState<ConversationDetails | null>(null);
   const [messages, setMessages] = useState<Messages>([]);
   const [conversations, setConversations] = useState<Conversations>([]);
   const [loggedUser, setLoggedUser] = useState<LoggedUser | null>(null);
@@ -42,33 +42,27 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     const fetchInitialData = async () => {
-      setIsSidebarLoading(true); // Inicia el estado de carga del sidebar
+      setIsSidebarLoading(true);
       try {
         const [allConversations, user] = await Promise.all([
           getConversations(),
           getLoggedUser(),
         ]);
-
-        const conversationId = params.get("conversation");
-        if (conversationId) {
-          const conversation = allConversations.find(
-            (conv) => conv.conversacion_id === Number(conversationId)
-          );
-          selectConversation(conversation?.conversacion_id ?? 0);
-        }
-
         setConversations(allConversations);
         setLoggedUser(user);
+
+        if (conversationId) {
+          await selectConversation(Number(conversationId));
+        }
       } catch (error) {
         console.error("Error al cargar los datos iniciales:", error);
       } finally {
-        setIsSidebarLoading(false); // Finaliza el estado de carga del sidebar
+        setIsSidebarLoading(false);
       }
     };
 
     fetchInitialData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [searchParams]);
 
   const selectConversation = async (conversationId: number) => {
     setIsChatLoading(true); // Inicia el estado de carga del chat
@@ -79,7 +73,6 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setSelectedConversation(conversation ?? null);
       setMessages(conversationMessages);
-
     } catch (error) {
       console.error("Error al seleccionar la conversación:", error);
     } finally {
@@ -92,7 +85,10 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
 
     setIsChatLoading(true); // Inicia el estado de carga del chat
     try {
-      const newMessage = await createMessage(selectedConversation.conversacion_id, { message });
+      const newMessage = await createMessage(
+        selectedConversation.conversacion_id,
+        { message }
+      );
 
       // Actualizar los mensajes en el estado
       setMessages((prev) => [...prev, newMessage]);
@@ -133,3 +129,4 @@ export const useChatContext = () => {
   }
   return context;
 };
+
