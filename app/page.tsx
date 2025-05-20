@@ -12,15 +12,15 @@ import FilterOptions from "@/components/common/filter-options";
 export default async function Page({
   searchParams,
 }: {
-  searchParams?: Record<string, string | string[]> 
+  searchParams?: any
 }) {
-  const params = (searchParams ?? {}) as Record<string, string | string[]>;
-  const query = params.query || "";
-  const sortBy = params.sortBy || "nameAsc";
-  const location = params.location || "all";
-  const minRating = params.minRating || "0";
-  const from = params.from || "";
-  const to = params.to || "";
+
+  const query = searchParams.query || "";
+  const sortBy = searchParams.sortBy || "nameAsc";
+  const location = searchParams.location || "all";
+  const minRating = searchParams.minRating || "0";
+  const from = searchParams.from || "";
+  const to = searchParams.to || "";
   const session = await auth();
 
   return (
