@@ -12,21 +12,20 @@ import FilterOptions from "@/components/common/filter-options";
 export default async function Page({
   searchParams,
 }: {
-  searchParams?: {
-    query?: string;
-    sortBy?: string;
-    location?: string;
-    minRating?: string;
-    from?: string;
-    to?: string;
-  };
+  searchParams?: Record<string, string | string[]> | Promise<Record<string, string | string[]>>
 }) {
-  const query = searchParams?.query || "";
-  const sortBy = searchParams?.sortBy || "nameAsc";
-  const location = searchParams?.location || "all";
-  const minRating = searchParams?.minRating || "0";
-  const from = searchParams?.from || "";
-  const to = searchParams?.to || "";
+  let params: Record<string, string | string[]>;
+  if (searchParams && typeof (searchParams as Promise<unknown>).then === "function") {
+    params = await searchParams as Record<string, string | string[]>;
+  } else {
+    params = (searchParams ?? {}) as Record<string, string | string[]>;
+  }
+  const query = params.query || "";
+  const sortBy = params.sortBy || "nameAsc";
+  const location = params.location || "all";
+  const minRating = params.minRating || "0";
+  const from = params.from || "";
+  const to = params.to || "";
   const session = await auth();
 
   return (
@@ -51,16 +50,23 @@ export default async function Page({
         </div>
 
         <Suspense
-          key={query + sortBy + location + minRating + from + to}
+          key={[
+            Array.isArray(query) ? query.join(",") : query,
+            Array.isArray(sortBy) ? sortBy.join(",") : sortBy,
+            Array.isArray(location) ? location.join(",") : location,
+            Array.isArray(minRating) ? minRating.join(",") : minRating,
+            Array.isArray(from) ? from.join(",") : from,
+            Array.isArray(to) ? to.join(",") : to
+          ].join("|")}
           fallback={<ProvidersGridSkeleton />}
         >
           <HomePage
-            query={query}
-            sortBy={sortBy}
-            location={location}
-            minRating={minRating}
-            from={from}
-            to={to}
+            query={Array.isArray(query) ? query.join(",") : query}
+            sortBy={Array.isArray(sortBy) ? sortBy.join(",") : sortBy}
+            location={Array.isArray(location) ? location.join(",") : location}
+            minRating={Array.isArray(minRating) ? minRating.join(",") : minRating}
+            from={Array.isArray(from) ? from.join(",") : from}
+            to={Array.isArray(to) ? to.join(",") : to}
           />
         </Suspense>
       </main>
