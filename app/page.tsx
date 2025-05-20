@@ -12,14 +12,9 @@ import FilterOptions from "@/components/common/filter-options";
 export default async function Page({
   searchParams,
 }: {
-  searchParams?: Record<string, string | string[]> | Promise<Record<string, string | string[]>>
+  searchParams?: Record<string, string | string[]> 
 }) {
-  let params: Record<string, string | string[]>;
-  if (searchParams && typeof (searchParams as Promise<unknown>).then === "function") {
-    params = await searchParams as Record<string, string | string[]>;
-  } else {
-    params = (searchParams ?? {}) as Record<string, string | string[]>;
-  }
+  const params = (searchParams ?? {}) as Record<string, string | string[]>;
   const query = params.query || "";
   const sortBy = params.sortBy || "nameAsc";
   const location = params.location || "all";
