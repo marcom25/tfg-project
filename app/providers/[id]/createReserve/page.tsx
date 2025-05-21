@@ -5,20 +5,21 @@ import ReservationForm from "@/components/agreement/create-reserve-form"
 
 
 type ProviderReserveProps = {
-  pathParams: Promise<{
-    id?: string
+  params: Promise<{
+    id: string
   }>
 }
 
-export default async function Page({ pathParams }: ProviderReserveProps) {
-  const params = await pathParams
+export default async function Page({ params }: ProviderReserveProps) {
+  const id = (await params).id;
+
   const provinces = await getProvinces()
-  const provider = await getProviderInfo(Number(params.id))
+  const provider = await getProviderInfo(Number(id))
 
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6">Reserva tu servicio de cuidado</h1>
-      <ReservationForm id={params.id ?? ""} provinces={provinces} providerName={`${provider.usuario.nombre} ${provider.usuario.apellido}`} />
+      <ReservationForm id={id} provinces={provinces} providerName={`${provider.usuario.nombre} ${provider.usuario.apellido}`} />
     </div>
   )
 }
