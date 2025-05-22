@@ -3,7 +3,7 @@
 import ChatSidebar from "@/components/chat/chat-sidebar";
 import MainChat from "@/components/chat/main-chat";
 import { ChatProvider } from "@/context/ChatContext";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 export default function Page() {
   // State to track available height
@@ -31,12 +31,14 @@ export default function Page() {
   }, []);
 
   return (
-    <ChatProvider>
-      <div className="flex overflow-hidden" style={{ height: availableHeight }}>
-        <ChatSidebar />
-        <MainChat />
-      </div>
-    </ChatProvider>
+    <Suspense fallback={<div></div>}>
+      <ChatProvider>
+        <div className="flex overflow-hidden" style={{ height: availableHeight }}>
+          <ChatSidebar />
+          <MainChat />
+        </div>
+      </ChatProvider>
+    </Suspense>
   );
 }
 
