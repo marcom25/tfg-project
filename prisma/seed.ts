@@ -1,4 +1,4 @@
-import { direccion } from './../node_modules/.prisma/client/index.d';
+import { direccion } from "./../node_modules/.prisma/client/index.d";
 import { faker } from "@faker-js/faker";
 import { PrismaClient } from "@prisma/client";
 import { provinciasData } from "./location.seed";
@@ -37,21 +37,20 @@ async function main() {
   const cities = await prisma.ciudad.findMany();
 
   // 3. Crear 10 direcciones con ciudad (y provincia) elegida aleatoriamente
-  const direccionesPromises = [];
+  const direcciones = [];
   for (let i = 1; i <= 10; i++) {
     const randomCity = getRandom(cities);
-    direccionesPromises.push(
-      prisma.direccion.create({
-        data: {
-          nombre: `Dirección ${i}`,
-          calle: faker.location.street(),
-          numero: faker.location.buildingNumber(),
-          ciudad: { connect: { ciudad_id: randomCity.ciudad_id } },
-        },
-      })
-    );
+    const direccion = await prisma.direccion.create({
+      data: {
+        nombre: `Dirección ${i}`,
+        calle: faker.location.street(),
+        numero: faker.location.buildingNumber(),
+        ciudad: { connect: { ciudad_id: randomCity.ciudad_id } },
+      },
+    });
+    direcciones.push(direccion);
   }
-  const direcciones = await Promise.all(direccionesPromises);
+  console.log("Direcciones creadas:", direcciones);
   console.log("Direcciones creadas:", direcciones);
 
   // 4. Crear roles (sin cambios)
@@ -107,8 +106,8 @@ async function main() {
   for (let i = 0; i < usersCliente.length; i++) {
     const cliente = await prisma.cliente.create({
       data: {
-        usuario: { connect: { usuario_id: usersCliente[i].usuario_id } }
-      }
+        usuario: { connect: { usuario_id: usersCliente[i].usuario_id } },
+      },
     });
     clientes.push(cliente);
   }
@@ -120,8 +119,8 @@ async function main() {
     const proveedor = await prisma.proveedor.create({
       data: {
         usuario: { connect: { usuario_id: usersProveedor[i].usuario_id } },
-        experiencia: `${2 + i} años de experiencia`
-      }
+        experiencia: `${2 + i} años de experiencia`,
+      },
     });
     proveedores.push(proveedor);
   }
@@ -134,7 +133,7 @@ async function main() {
     "Limpieza del Hogar",
     "Asistencia a Personas Mayores",
     "Jardinería",
-  ]
+  ];
 
   // Servicios disponibles para proveedores
   const serviciosProveedor = [
@@ -143,50 +142,54 @@ async function main() {
     "Servicios de Enfermería",
     "Asistencia Educativa",
     "Servicios de Cocina",
-  ]
+  ];
 
   // Crear servicios para clientes
-  const serviciosCreados = []
+  const serviciosCreados = [];
 
   for (const cliente of clientes) {
     // Seleccionar un servicio aleatorio para cada cliente
-    const servicioAleatorio = serviciosCliente[Math.floor(Math.random() * serviciosCliente.length)]
+    const servicioAleatorio =
+      serviciosCliente[Math.floor(Math.random() * serviciosCliente.length)];
 
     const servicio = await prisma.servicio.create({
       data: {
         nombre_servicio: servicioAleatorio,
         cliente: { connect: { cliente_id: cliente.cliente_id } },
       },
-    })
+    });
 
-    serviciosCreados.push(servicio)
-    console.log(`Servicio creado para cliente ${cliente.cliente_id}: ${servicioAleatorio}`)
+    serviciosCreados.push(servicio);
+    console.log(
+      `Servicio creado para cliente ${cliente.cliente_id}: ${servicioAleatorio}`
+    );
   }
 
   // Crear servicios para proveedores
   for (const proveedor of proveedores) {
     // Seleccionar un servicio aleatorio para cada proveedor
-    const servicioAleatorio = serviciosProveedor[Math.floor(Math.random() * serviciosProveedor.length)]
+    const servicioAleatorio =
+      serviciosProveedor[Math.floor(Math.random() * serviciosProveedor.length)];
 
     const servicio = await prisma.servicio.create({
       data: {
         nombre_servicio: servicioAleatorio,
         proveedor: { connect: { proveedor_id: proveedor.proveedor_id } },
       },
-    })
+    });
 
-    serviciosCreados.push(servicio)
-    console.log(`Servicio creado para proveedor ${proveedor.proveedor_id}: ${servicioAleatorio}`)
+    serviciosCreados.push(servicio);
+    console.log(
+      `Servicio creado para proveedor ${proveedor.proveedor_id}: ${servicioAleatorio}`
+    );
   }
 
-  console.log(`Total de servicios creados: ${serviciosCreados.length}`)
+  console.log(`Total de servicios creados: ${serviciosCreados.length}`);
 
   // After this point, continue with the existing code for creating contratos...
-  
 
   // SOLO CUANDO YA HAY CLIENTES CREADOS
   // const clientes = await prisma.cliente.findMany();
-  
 
   // 10. Crear 10 contratos con estados permitidos
   const allowedStates = [
