@@ -53,7 +53,6 @@ export default async function ClientInfo({ id }: { id: number }) {
         <CardContent>
           <div className="grid gap-4">
             {client.usuario.descripcion && (
-
               <div>
                 <h3 className="font-semibold mb-2">Descripción</h3>
                 <p className="text-sm text-gray-600">
@@ -107,8 +106,15 @@ export default async function ClientInfo({ id }: { id: number }) {
                   </Link>
                 </Button>
                 <Button variant="outline" size="sm">
-                  <MailIcon className="w-4 h-4 mr-2" />
-                  Enviar email
+                  <Link
+                    className="flex items-center"
+                    href={`mailto:${client.usuario.email}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <MailIcon className="w-4 h-4 mr-2" />
+                    Enviar email
+                  </Link>
                 </Button>
               </div>
             </div>

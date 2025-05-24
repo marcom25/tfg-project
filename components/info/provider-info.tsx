@@ -113,9 +113,17 @@ export default async function ProviderInfo({ id }: { id: number }) {
                   </Link>
                 </Button>
                 <Button variant="outline" size="sm">
-                  <MailIcon className="w-4 h-4 mr-2" />
-                  Enviar email
+                  <Link
+                    className="flex items-center"
+                    href={`mailto:${provider.usuario.email}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <MailIcon className="w-4 h-4 mr-2" />
+                    Enviar email
+                  </Link>
                 </Button>
+
                 <Button variant="outline" size="sm">
                   <Link
                     href={`/providers/${id}/createReserve`}
