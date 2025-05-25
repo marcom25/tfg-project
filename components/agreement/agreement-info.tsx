@@ -21,6 +21,7 @@ import {
   RotateCcw,
   CheckCircle2,
   CircleXIcon as XCircle2,
+  Handshake,
 } from "lucide-react";
 import {
   getDecisionMessage,
@@ -192,6 +193,32 @@ export default async function AgreementInfo({
                           )}`
                         : "N/A"}
                     </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 col-span-full">
+                  <Handshake className="h-5 w-5 text-blue-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-gray-500">Servicios</p>
+                    <div className="font-medium flex gap-2">
+                      {userRole === "CLIENT"
+                        ? contract?.proveedor.servicios.map((service) => (
+                            <Badge
+                              variant="outline"
+                              key={service.nombre_servicio}
+                            >
+                              {service.nombre_servicio}
+                            </Badge>
+                          ))
+                        : contract?.cliente.servicios.map((service) => (
+                            <Badge
+                              variant="outline"
+                              key={service.nombre_servicio}
+                            >
+                              {service.nombre_servicio}
+                            </Badge>
+                          ))}
+                    </div>
                   </div>
                 </div>
 

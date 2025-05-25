@@ -161,7 +161,7 @@ export default async function ClientInfo({ id }: { id: number }) {
             ))}
           </div>
 
-          <CommentSection providerId={Number(id)} />
+          <CommentSection clientId={Number(id)} />
         </CardContent>
       </Card>
     </div>

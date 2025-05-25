@@ -130,7 +130,7 @@ export async function getContractsByProviderId() {
 export async function calculateEarningnsByProviderId(): Promise<DashboardEarnings> {
   const session = await auth();
 
-  const providerId = await getClientIdFromUserId(Number(session?.user.id));
+  const providerId = await getProviderIdFromUserId(Number(session?.user.id));
   const totalEarnings = await prisma.contrato.aggregate({
     _sum: {
       monto_acordado: true,

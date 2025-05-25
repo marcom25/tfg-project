@@ -20,6 +20,8 @@ function getColorByState(state: number): string {
       return "bg-gray-100 text-gray-500 border-gray-500";
     case ContractStates.PENDING:
       return "bg-blue-100 text-blue-500 border-blue-500";
+    case ContractStates.ACCEPTED:
+      return "bg-gray-100 text-gray-500 border-gray-500";
     default:
       return "bg-red-100 text-red-500 border-red-500";
   }
@@ -79,7 +81,7 @@ function ContractCard({ contract }: { contract: Contract }) {
             {contract.direccion?.calle} {contract.direccion?.numero},{" "}
             {contract.direccion?.ciudad?.nombre}
           </p>
-          <div className="w-fit mt-2">
+          <div className="mt-2 gap-1 w-full flex">
             {contract.cliente.servicios.slice(0, 1).map((service: servicio) => (
               <Badge key={service.nombre_servicio} variant="default">
                 {service.nombre_servicio}

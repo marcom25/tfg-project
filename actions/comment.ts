@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { CommentFormSchemaType } from "@/lib/schemas";
 import { revalidatePath } from "next/cache";
 import { getUserIdFromClientId, getUserIdFromProviderId } from "./users";
+import { ContractStates } from "@/lib/definitions";
 
 export async function submitCommentForProvider(
   data: CommentFormSchemaType,
@@ -11,27 +12,6 @@ export async function submitCommentForProvider(
 ) {
   const session = await auth();
   const userId = Number(session?.user.id || 0);
-
-  const validContract = await prisma.contrato.findFirst({
-    where: {
-      OR: [
-        {
-          cliente: { usuario_id: userId },
-          proveedor: { usuario_id: providerId },
-          fecha_fin: { lte: new Date() },
-        },
-        {
-          proveedor: { usuario_id: userId },
-          cliente: { usuario_id: providerId },
-          fecha_fin: { lte: new Date() },
-        },
-      ],
-    },
-  });
-
-  if (!validContract) {
-    throw new Error("Debes tener un contrato finalizado para comentar");
-  }
 
   const userProviderId = await getUserIdFromProviderId(providerId);
   await prisma.comentario.create({
@@ -74,27 +54,6 @@ export async function submitCommentForClient(
 ) {
   const session = await auth();
   const userId = Number(session?.user.id || 0);
-
-  const validContract = await prisma.contrato.findFirst({
-    where: {
-      OR: [
-        {
-          cliente: { usuario_id: clientId },
-          proveedor: { usuario_id: userId },
-          fecha_fin: { lte: new Date() },
-        },
-        {
-          proveedor: { usuario_id: clientId },
-          cliente: { usuario_id: userId },
-          fecha_fin: { lte: new Date() },
-        },
-      ],
-    },
-  });
-
-  if (!validContract) {
-    throw new Error("Debes tener un contrato finalizado para comentar");
-  }
 
   const userClientId = await getUserIdFromClientId(clientId);
   await prisma.comentario.create({
@@ -145,37 +104,30 @@ export async function checkCommentPermission(
     // Obtener el usuario_id según el tipo
     let targetUserId: number | undefined | null;
     const sessionUserId: number = Number(session.user.id);
+    let whereClause;
 
     if (type === "provider") {
       // Si el tipo es "provider", el ID recibido es un proveedor_id
       targetUserId = await getUserIdFromProviderId(clientOrProviderId);
+
+      whereClause = {
+        cliente: { usuario_id: sessionUserId },
+        proveedor: { usuario_id: targetUserId ? targetUserId : 0 },
+        estado_id: ContractStates.FINISHED,
+      };
     } else {
       // Si el tipo es "client", el ID recibido es un cliente_id
       targetUserId = await getUserIdFromClientId(clientOrProviderId);
+      whereClause = {
+        proveedor: { usuario_id: sessionUserId },
+        cliente: { usuario_id: targetUserId ? targetUserId : 0 },
+        estado_id: ContractStates.FINISHED,
+      };
     }
-
-    // Configurar las condiciones dinámicas
-    const whereClause = {
-      OR: [
-        // Caso 1: El usuario de sesión es el CLIENTE y el target es el PROVEEDOR
-        type === "provider"
-          ? {
-              cliente: { usuario_id: sessionUserId },
-              proveedor: { usuario_id: targetUserId ? targetUserId : 0 },
-              fecha_fin: { lte: new Date() },
-            }
-          : // Caso 2: El usuario de sesión es el PROVEEDOR y el target es el CLIENTE
-            {
-              proveedor: { usuario_id: sessionUserId },
-              cliente: { usuario_id: targetUserId ? targetUserId : 0 },
-              fecha_fin: { lte: new Date() },
-            },
-      ],
-    };
 
     const validContract = await prisma.contrato.findFirst({
       where: whereClause,
-    });
+    });    
 
     return { allowed: !!validContract, error: null };
   } catch (error) {
@@ -183,3 +135,4 @@ export async function checkCommentPermission(
     return { allowed: false, error: "Error al verificar permisos" };
   }
 }
+

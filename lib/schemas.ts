@@ -96,7 +96,8 @@ export const ReservationFormSchema = z
       }),
     street: z
       .string()
-      .min(3, { message: "La calle debe tener al menos 3 caracteres" }),
+      .min(3, { message: "La calle debe tener al menos 3 caracteres" })
+      .max(200, { message: "La calle no puede tener más de 200 caracteres" }),
     streetNumber: z.coerce
       .number({
         required_error: "El número es requerido",
@@ -130,29 +131,48 @@ export const ReservationFormSchema = z
 export type ReservationFormSchemaType = z.infer<typeof ReservationFormSchema>;
 
 export const UserProfileFormProviderSchema = z.object({
-  name: z.string().min(1, { message: "El nombre es requerido" }),
+  name: z
+    .string()
+    .min(1, { message: "El nombre es requerido" })
+    .max(100, { message: "El nombre no puede tener más de 100 caracteres" }),
   password: z
-      .string()
-      .min(6, { message: "La contraseña debe contener al menos 6 caracteres." })
-      .regex(/[a-z]/, {
-        message: "La contraseña debe contener al menos una letra minúscula.",
-      })
-      .regex(/[A-Z]/, {
-        message: "La contraseña debe contener al menos una letra mayúscula.",
-      })
-      .regex(/[0-9]/, {
-        message: "La contraseña debe contener al menos un número.",
-      })
-      .regex(/[^a-zA-Z0-9]/, {
-        message: "La contraseña debe contener al menos un carácter especial.",
-      })
-      .trim(),
-  lastname: z.string().min(1, { message: "El apellido es requerido" }),
-  email: z.string().email({ message: "Debe ser un correo válido" }),
-  phone: z.string().min(1, { message: "El teléfono es requerido" }),
+    .string()
+    .min(6, { message: "La contraseña debe contener al menos 6 caracteres." })
+    .regex(/[a-z]/, {
+      message: "La contraseña debe contener al menos una letra minúscula.",
+    })
+    .regex(/[A-Z]/, {
+      message: "La contraseña debe contener al menos una letra mayúscula.",
+    })
+    .regex(/[0-9]/, {
+      message: "La contraseña debe contener al menos un número.",
+    })
+    .regex(/[^a-zA-Z0-9]/, {
+      message: "La contraseña debe contener al menos un carácter especial.",
+    })
+    .max(255, { message: "La contraseña no puede tener más de 255 caracteres" })
+    .trim(),
+  lastname: z
+    .string()
+    .min(1, { message: "El apellido es requerido" })
+    .max(100, { message: "El apellido no puede tener más de 100 caracteres" }),
+  email: z
+    .string()
+    .email({ message: "Debe ser un correo válido" })
+    .max(150, { message: "El correo no puede tener más de 150 caracteres" }),
+  phone: z
+    .string()
+    .regex(/^\d+$/, { message: "El teléfono tiene que ser un número" })
+    .min(1, { message: "El teléfono es requerido" })
+    .max(13, { message: "El teléfono no puede tener más de 13 caracteres" }),
   experience: z.string().min(1, { message: "La experiencia es requerida" }),
-  street: z.string().min(1, { message: "La calle es requerida" }),
-  streetNumber: z.number().min(1, { message: "El número debe ser mayor a 0" }),
+  street: z
+    .string()
+    .min(1, { message: "La calle es requerida" })
+    .max(200, { message: "La calle no puede tener más de 200 caracteres" }),
+  streetNumber: z
+    .number({ message: "El número tiene que ser un número" })
+    .min(1, { message: "El número debe ser mayor a 0" }),
   provinceId: z.string().min(1, { message: "La provincia es requerida" }),
   cityId: z.string().min(1, { message: "La ciudad es requerida" }),
   aboutMe: z.string().optional(), // Este campo no es requerido
@@ -171,28 +191,48 @@ export type UserProfileFormProviderSchemaType = z.infer<
 >;
 
 export const UserProfileFormClientSchema = z.object({
-  name: z.string().min(1, { message: "El nombre es requerido" }),
+  name: z
+    .string()
+    .min(1, { message: "El nombre es requerido" })
+    .max(100, { message: "El nombre no puede tener más de 100 caracteres" }),
   password: z
-      .string()
-      .min(6, { message: "La contraseña debe contener al menos 6 caracteres." })
-      .regex(/[a-z]/, {
-        message: "La contraseña debe contener al menos una letra minúscula.",
-      })
-      .regex(/[A-Z]/, {
-        message: "La contraseña debe contener al menos una letra mayúscula.",
-      })
-      .regex(/[0-9]/, {
-        message: "La contraseña debe contener al menos un número.",
-      })
-      .regex(/[^a-zA-Z0-9]/, {
-        message: "La contraseña debe contener al menos un carácter especial.",
-      })
-      .trim(),
-  lastname: z.string().min(1, { message: "El apellido es requerido" }),
-  email: z.string().email({ message: "Debe ser un correo válido" }),
-  phone: z.string().min(1, { message: "El teléfono es requerido" }),
-  street: z.string().min(1, { message: "La calle es requerida" }),
-  streetNumber: z.number().min(1, { message: "El número debe ser mayor a 0" }),
+    .string()
+    .min(6, { message: "La contraseña debe contener al menos 6 caracteres." })
+    .regex(/[a-z]/, {
+      message: "La contraseña debe contener al menos una letra minúscula.",
+    })
+    .regex(/[A-Z]/, {
+      message: "La contraseña debe contener al menos una letra mayúscula.",
+    })
+    .regex(/[0-9]/, {
+      message: "La contraseña debe contener al menos un número.",
+    })
+    .regex(/[^a-zA-Z0-9]/, {
+      message: "La contraseña debe contener al menos un carácter especial.",
+    })
+    .max(255, { message: "La contraseña no puede tener más de 255 caracteres" })
+    .trim(),
+  lastname: z
+    .string()
+    .min(1, { message: "El apellido es requerido" })
+    .max(100, { message: "El apellido no puede tener más de 100 caracteres" }),
+  email: z
+    .string()
+    .email({ message: "Debe ser un correo válido" })
+    .max(150, { message: "El correo no puede tener más de 150 caracteres" }),
+  phone: z
+    .string()
+    .regex(/^\d+$/, { message: "El teléfono tiene que ser un número" })
+    .min(1, { message: "El teléfono es requerido" })
+    .max(13, { message: "El teléfono no puede tener más de 13 caracteres" }),
+  street: z
+    .string()
+    .min(1, { message: "La calle es requerida" })
+    .max(200, { message: "La calle no puede tener más de 200 caracteres" }),
+  streetNumber: z
+    .number({ message: "El número tiene que ser un número" })
+    .min(1, { message: "El número debe ser mayor a 0" })
+    .max(20, { message: "El número no puede tener más de 20 caracteres" }),
   provinceId: z.string().min(1, { message: "La provincia es requerida" }),
   cityId: z.string().min(1, { message: "La ciudad es requerida" }),
   aboutMe: z.string().optional(), // Este campo no es requerido
@@ -204,22 +244,24 @@ export const UserProfileFormClientSchema = z.object({
     )
     .min(1, { message: "Debes agregar al menos un servicio" }),
   avatarId: z.string().optional(),
-})
+});
 
-export type UserProfileFormClientSchemaType = z.infer<typeof UserProfileFormClientSchema>
+export type UserProfileFormClientSchemaType = z.infer<
+  typeof UserProfileFormClientSchema
+>;
 
 export const MessageFormSchema = z.object({
   message: z.string().min(1, { message: "El mensaje no puede estar vacío" }),
-})
-export type MessageFormSchemaType = z.infer<typeof MessageFormSchema>
+});
+export type MessageFormSchemaType = z.infer<typeof MessageFormSchema>;
 
 export const AgreementFormSchema = z.object({
   amount: z.coerce
-      .number({
-        required_error: "El monto es requerido",
-        invalid_type_error: "Debe ser un número",
-      })
-      .min(1, { message: "El monto debe ser mayor o igual a 1" }),
-})
+    .number({
+      required_error: "El monto es requerido",
+      invalid_type_error: "Debe ser un número",
+    })
+    .min(1, { message: "El monto debe ser mayor o igual a 1" }),
+});
 
-export type AgreementFormSchemaType = z.infer<typeof AgreementFormSchema>
+export type AgreementFormSchemaType = z.infer<typeof AgreementFormSchema>;

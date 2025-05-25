@@ -174,7 +174,7 @@ export default function AgreementActions({
         {contractState !== "PENDING" && (
           <div className="w-full bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 p-4 rounded mb-4 flex items-center gap-2">
             <svg
-              className="w-5 h-5 text-yellow-400"
+              className="w-36 text-yellow-400"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"

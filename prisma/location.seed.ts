@@ -156,7 +156,7 @@ export const provinciasData = [
       },
     },
     {
-      nombre: "CORDOBA",
+      nombre: "CÓRDOBA",
       ciudades: {
         create: [
           {
@@ -230,7 +230,7 @@ export const provinciasData = [
       },
     },
     {
-      nombre: "ENTRE RIOS",
+      nombre: "ENTRE RÍOS",
       ciudades: {
         create: [
           {
@@ -490,7 +490,7 @@ export const provinciasData = [
       },
     },
     {
-      nombre: "NEUQUEN",
+      nombre: "NEUQUÉN",
       ciudades: {
         create: [
           {
@@ -527,7 +527,7 @@ export const provinciasData = [
       },
     },
     {
-      nombre: "RIO NEGRO",
+      nombre: "RÍO NEGRO",
       ciudades: {
         create: [
           {
@@ -805,7 +805,7 @@ export const provinciasData = [
       },
     },
     {
-      nombre: "TUCUMAN",
+      nombre: "TUCUMÁN",
       ciudades: {
         create: [
           {

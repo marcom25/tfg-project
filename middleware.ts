@@ -31,7 +31,6 @@ export default middleware((req) => {
   const { nextUrl, auth } = req;
   const isLoggedIn = !!auth?.user;
 
-  console.log(auth?.user);
 
   if (authRoutes.includes(nextUrl.pathname) && isLoggedIn) {
     if (auth?.user.role === "CLIENT") {
