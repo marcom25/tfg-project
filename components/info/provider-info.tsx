@@ -90,7 +90,7 @@ export default async function ProviderInfo({ id }: { id: number }) {
               </div>
             </div>
             {provider.usuario.telefono && (
-              <div className="mt-4">
+              <div>
                 <h3 className="font-semibold mb-2">Teléfono</h3>
                 <div className="flex items-center">
                   <Phone className="w-4 h-4 mr-2" />

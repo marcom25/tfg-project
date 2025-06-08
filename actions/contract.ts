@@ -1,13 +1,19 @@
 "use server";
 
 import { auth } from "@/auth";
-import { ContractStates, DashboardEarnings, DecisionStates } from "@/lib/definitions";
+import {
+  ContractStates,
+  DashboardEarnings,
+  DecisionStates,
+} from "@/lib/definitions";
 import prisma from "@/lib/prisma";
 import { ReservationFormSchemaType } from "@/lib/schemas";
 import { getClientIdFromUserId, getProviderIdFromUserId } from "./users";
 import { revalidatePath } from "next/cache";
 
-export type Contract = Awaited<ReturnType<typeof getContractsByProviderId>>[number];
+export type Contract = Awaited<
+  ReturnType<typeof getContractsByProviderId>
+>[number];
 
 export async function createReservation(
   id: number,
@@ -100,7 +106,7 @@ export async function getContractsByProviderId() {
   const session = await auth();
 
   const providerId = await getProviderIdFromUserId(Number(session?.user.id));
-  
+
   const contracts = await prisma.contrato.findMany({
     where: {
       proveedor_id: providerId,
@@ -275,15 +281,15 @@ export async function calculateWeeklyAverageHoursByProviderId() {
   });
 
   const laborDaysInMonth = 22; // Approximation of working days in a month
-  const totalMonthlyHours = (monthlyHours._sum.cantidad_horas || 0) * laborDaysInMonth;
+  const totalMonthlyHours =
+    (monthlyHours._sum.cantidad_horas || 0) * laborDaysInMonth;
 
-
-  return (totalMonthlyHours / laborDaysInMonth);
+  return totalMonthlyHours / laborDaysInMonth;
 }
 
 export async function getContractsByDateRange(date: Date) {
   const session = await auth();
-  const providerId = await getClientIdFromUserId(Number(session?.user.id));
+  const providerId = await getProviderIdFromUserId(Number(session?.user.id));
   const contracts = await prisma.contrato.findMany({
     where: {
       proveedor_id: providerId,
@@ -296,8 +302,6 @@ export async function getContractsByDateRange(date: Date) {
       estado: {
         estado_id: ContractStates.ON_GOING,
       },
-      decision_cliente: DecisionStates.ACCEPTED,
-      decision_proveedor: DecisionStates.ACCEPTED,
     },
     include: {
       cliente: {
@@ -324,13 +328,13 @@ export async function getContractsByDateRange(date: Date) {
 
 export async function getConctractById(contractId: number) {
   const session = await auth();
-  let userId
+  let userId;
   if (session?.user.role !== "PROVIDER") {
     userId = await getClientIdFromUserId(Number(session?.user.id));
   } else {
     userId = await getProviderIdFromUserId(Number(session?.user.id));
   }
-  
+
   const contract = await prisma.contrato.findUnique({
     where: {
       contrato_id: contractId,
@@ -341,7 +345,7 @@ export async function getConctractById(contractId: number) {
         {
           cliente_id: Number(userId),
         },
-      ]
+      ],
     },
     include: {
       cliente: {
@@ -363,11 +367,10 @@ export async function getConctractById(contractId: number) {
           ciudad: {
             include: {
               provincia: true,
-            }
+            },
           },
-         
         },
-      }
+      },
     },
   });
 
@@ -464,3 +467,4 @@ export async function updateContractDecisionProvider(
 
   revalidatePath(`/agreement/${contractId}`);
 }
+

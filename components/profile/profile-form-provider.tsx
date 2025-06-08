@@ -138,7 +138,7 @@ export default function ProfileFormProvider({
 
   // Function to generate a new avatar
   const generateNewAvatar = () => {
-    const newSeed = faker.image.avatar();
+    const newSeed = faker.image.avatarGitHub();
     setAvatarId(newSeed);
     form.setValue("avatarId", newSeed);
   };

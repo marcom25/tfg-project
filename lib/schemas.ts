@@ -231,8 +231,7 @@ export const UserProfileFormClientSchema = z.object({
     .max(200, { message: "La calle no puede tener más de 200 caracteres" }),
   streetNumber: z
     .number({ message: "El número tiene que ser un número" })
-    .min(1, { message: "El número debe ser mayor a 0" })
-    .max(20, { message: "El número no puede tener más de 20 caracteres" }),
+    .min(1, { message: "El número debe ser mayor a 0" }),
   provinceId: z.string().min(1, { message: "La provincia es requerida" }),
   cityId: z.string().min(1, { message: "La ciudad es requerida" }),
   aboutMe: z.string().optional(), // Este campo no es requerido
