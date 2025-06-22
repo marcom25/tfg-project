@@ -1,6 +1,7 @@
 import { calculateEarningnsByProviderId } from "@/actions/contract";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { CalendarIcon, DollarSignIcon, UserIcon } from "lucide-react";
+import { formatNumber } from "@/lib/utils";
 
 async function DashboardEarnings() {
   const earnings = await calculateEarningnsByProviderId();
@@ -19,7 +20,7 @@ async function DashboardEarnings() {
                   Total
                 </span>
                 <span className="text-xl font-bold text-green-700">
-                  ${earnings.total.toString()}
+                  ${formatNumber(earnings.total.toString())}
                 </span>
               </div>
             </div>
@@ -31,7 +32,7 @@ async function DashboardEarnings() {
                   Este mes
                 </span>
                 <span className="text-xl font-bold text-blue-700">
-                  ${earnings.monthly.toString()}
+                  ${formatNumber(earnings.monthly.toString())}
                 </span>
               </div>
             </div>
@@ -43,7 +44,7 @@ async function DashboardEarnings() {
                   Pendiente
                 </span>
                 <span className="text-xl font-bold text-yellow-700">
-                  ${earnings.pending.toString()}
+                  ${formatNumber(earnings.pending.toString())}
                 </span>
               </div>
             </div>

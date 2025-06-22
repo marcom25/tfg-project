@@ -10,6 +10,8 @@ async function DashboardHours() {
   const weeklyHours = await calculateWeeklyHoursByProviderId();
   const monthlyHours = await calculateMonthlyHoursByProviderId();
   const weeklyAverageHours = await calculateWeeklyAverageHoursByProviderId();
+  console.log(weeklyHours, monthlyHours, weeklyAverageHours);
+  
   return (
     <Card className="flex-grow w-full md:w-1/4 flex flex-col">
       <CardHeader>

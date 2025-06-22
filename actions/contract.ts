@@ -10,6 +10,15 @@ import prisma from "@/lib/prisma";
 import { ReservationFormSchemaType } from "@/lib/schemas";
 import { getClientIdFromUserId, getProviderIdFromUserId } from "./users";
 import { revalidatePath } from "next/cache";
+import {
+  eachDayOfInterval,
+  isWeekend,
+  endOfMonth,
+  endOfWeek,
+  startOfDay,
+  max as dateMax,
+  startOfWeek,
+} from "date-fns";
 
 export type Contract = Awaited<
   ReturnType<typeof getContractsByProviderId>
@@ -193,98 +202,120 @@ export async function calculateEarningnsByProviderId(): Promise<DashboardEarning
   };
 }
 
+function getLaborDaysBetween(start: Date, end: Date) {
+  const days = eachDayOfInterval({ start, end });
+  return days.filter((d) => !isWeekend(d)).length;
+}
+
 export async function calculateWeeklyHoursByProviderId() {
   const session = await auth();
+  const providerId = await getProviderIdFromUserId(Number(session?.user.id));
+  const today = startOfDay(new Date());
+  const weekEnd = endOfWeek(today, { weekStartsOn: 1 }); // Lunes a domingo
+  const weekStart = startOfWeek(today, { weekStartsOn: 1 }); // 1 = lunes
 
-  const providerId = await getClientIdFromUserId(Number(session?.user.id));
-  const currentDate = new Date();
-  const startOfWeek = new Date(
-    currentDate.setDate(currentDate.getDate() - currentDate.getDay())
-  );
-  const endOfWeek = new Date(
-    currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 6)
-  );
-
-  const weeklyHours = await prisma.contrato.aggregate({
-    _sum: {
-      cantidad_horas: true,
-    },
+  // Traer contratos ON_GOING y ACCEPTED (sin límite de fechas)
+  const contracts = await prisma.contrato.findMany({
     where: {
       proveedor_id: providerId,
-      estado: {
-        estado_id: ContractStates.ON_GOING,
-      },
-      decision_cliente: DecisionStates.ACCEPTED,
-      decision_proveedor: DecisionStates.ACCEPTED,
-      fecha_fin: {
-        gte: startOfWeek,
-        lte: endOfWeek,
-      },
+      estado: { estado_id: ContractStates.ON_GOING },
+    },
+    select: {
+      cantidad_horas: true,
+      fecha_inicio: true,
+      fecha_fin: true,
     },
   });
+  console.log(contracts);
+  
 
-  return weeklyHours._sum.cantidad_horas || 0;
+  let total = 0;
+  for (const c of contracts) {
+    // El inicio real es el mayor entre hoy y la fecha de inicio del contrato
+    const start = dateMax([weekStart, startOfDay(new Date(c.fecha_inicio))]);
+    const end = startOfDay(new Date(c.fecha_fin)) > weekEnd
+      ? weekEnd
+      : startOfDay(new Date(c.fecha_fin));
+    if (start > end) continue;
+    const laborDays = getLaborDaysBetween(start, end);
+    total += (c.cantidad_horas || 0) * laborDays;
+  }
+  return total;
 }
 
 export async function calculateMonthlyHoursByProviderId() {
   const session = await auth();
+  const providerId = await getProviderIdFromUserId(Number(session?.user.id));
+  const today = startOfDay(new Date());
+  const monthEnd = endOfMonth(today);
 
-  const providerId = await getClientIdFromUserId(Number(session?.user.id));
-  const currentMonth = new Date().getMonth() + 1;
-  const currentYear = new Date().getFullYear();
-
-  const monthlyHours = await prisma.contrato.aggregate({
-    _sum: {
-      cantidad_horas: true,
-    },
+  // Traer contratos ON_GOING y ACCEPTED (sin límite de fechas)
+  const contracts = await prisma.contrato.findMany({
     where: {
       proveedor_id: providerId,
-      estado: {
-        estado_id: ContractStates.ON_GOING,
-      },
-      decision_cliente: DecisionStates.ACCEPTED,
-      decision_proveedor: DecisionStates.ACCEPTED,
-      fecha_fin: {
-        gte: new Date(`${currentYear}-${currentMonth}-01`),
-        lt: new Date(`${currentYear}-${currentMonth + 1}-01`),
-      },
+      estado: { estado_id: ContractStates.ON_GOING },
+    },
+    select: {
+      cantidad_horas: true,
+      fecha_inicio: true,
+      fecha_fin: true,
     },
   });
 
-  const laborDaysInMonth = 22; // Approximation of working days in a month
-  return (monthlyHours._sum.cantidad_horas || 0) * laborDaysInMonth;
+  let total = 0;
+  for (const c of contracts) {
+    // El inicio real es el mayor entre hoy y la fecha de inicio del contrato
+    const start = dateMax([today, startOfDay(new Date(c.fecha_inicio))]);
+    const end =
+      startOfDay(new Date(c.fecha_fin)) > monthEnd
+        ? monthEnd
+        : startOfDay(new Date(c.fecha_fin));
+    if (start > end) continue;
+    const laborDays = getLaborDaysBetween(start, end);
+    total += (c.cantidad_horas || 0) * laborDays;
+  }
+  return total;
 }
 
 export async function calculateWeeklyAverageHoursByProviderId() {
   const session = await auth();
+  const providerId = await getProviderIdFromUserId(Number(session?.user.id));
+  const today = startOfDay(new Date());
+  const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+  const monthEnd = endOfMonth(today);
 
-  const providerId = await getClientIdFromUserId(Number(session?.user.id));
-  const currentMonth = new Date().getMonth() + 1;
-  const currentYear = new Date().getFullYear();
-
-  const monthlyHours = await prisma.contrato.aggregate({
-    _sum: {
-      cantidad_horas: true,
-    },
+  // Traer contratos ON_GOING y ACCEPTED (sin límite de fechas)
+  const contracts = await prisma.contrato.findMany({
     where: {
       proveedor_id: providerId,
-      estado: {
-        estado_id: ContractStates.ON_GOING,
-      },
-      decision_cliente: DecisionStates.ACCEPTED,
-      decision_proveedor: DecisionStates.ACCEPTED,
-      fecha_fin: {
-        gte: new Date(`${currentYear}-${currentMonth}-01`),
-        lt: new Date(`${currentYear}-${currentMonth + 1}-01`),
-      },
+      estado: { estado_id: ContractStates.ON_GOING },
+    },
+    select: {
+      cantidad_horas: true,
+      fecha_inicio: true,
+      fecha_fin: true,
     },
   });
 
-  const laborDaysInMonth = 22; // Approximation of working days in a month
-  const totalMonthlyHours =
-    (monthlyHours._sum.cantidad_horas || 0) * laborDaysInMonth;
+  let totalHours = 0;
+  for (const c of contracts) {
+    // El inicio real es el mayor entre el primer día del mes y la fecha de inicio del contrato
+    const start = dateMax([monthStart, startOfDay(new Date(c.fecha_inicio))]);
+    const end =
+      startOfDay(new Date(c.fecha_fin)) > monthEnd
+        ? monthEnd
+        : startOfDay(new Date(c.fecha_fin));
+    if (start > end) continue;
+    const laborDays = getLaborDaysBetween(start, end);
+    totalHours += (c.cantidad_horas || 0) * laborDays;
+  }
 
-  return totalMonthlyHours / laborDaysInMonth;
+  // Calcular cantidad de semanas completas en el mes actual
+  const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd });
+  const weeksInMonth = Math.ceil(daysInMonth.length / 7);
+
+  // Promedio semanal
+  return weeksInMonth > 0 ? totalHours / weeksInMonth : 0;
 }
 
 export async function getContractsByDateRange(date: Date) {
