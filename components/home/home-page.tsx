@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { MapPin, Star } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { getFilteredProviders } from "@/actions/provider";
-import { getRating } from "@/lib/utils";
+import { getRating, truncateText } from "@/lib/utils";
 import { NoResults } from "../common/no-results";
 
 export default async function HomePage({
@@ -69,7 +69,7 @@ export default async function HomePage({
               <div className="flex flex-wrap justify-center gap-2 mt-auto">
                 {provider.servicios.slice(0, 1).map((service) => (
                   <Badge key={service.nombre_servicio} variant="secondary">
-                    {service.nombre_servicio}
+                    {truncateText(service.nombre_servicio, 20)}
                   </Badge>
                 ))}
                 {provider.servicios.length > 1 && (

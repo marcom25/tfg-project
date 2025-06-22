@@ -10,7 +10,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { getStateMessage, getVariantFromState } from "@/lib/utils";
+import { getStateMessage, getVariantFromState, truncateText } from "@/lib/utils";
 import { getContractsByClientId } from "@/actions/contract";
 
 export async function ContractCarousel() {
@@ -91,7 +91,7 @@ export async function ContractCarousel() {
                               variant="secondary"
                               className="text-xs"
                             >
-                              {service.nombre_servicio}
+                              {truncateText(service.nombre_servicio, 20)}
                             </Badge>
                           ))}
                         {contract.proveedor.servicios.length > 1 && (

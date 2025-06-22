@@ -68,7 +68,7 @@ export default async function ProviderInfo({ id }: { id: number }) {
               </div>
             )}
             <div>
-              <h3 className="font-semibold mb-2">Habilidades</h3>
+              <h3 className="font-semibold mb-2">Servicios que ofrece</h3>
               <div className="flex flex-wrap gap-2">
                 {provider.servicios.map((service) => (
                   <Badge key={service.servicio_id}>

@@ -46,6 +46,7 @@ export default function Login() {
     const response = await authenticate(data);
     if (response?.error) {
       setError(response);
+      setLoading(false);
     }
     router.refresh()
   }

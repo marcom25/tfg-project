@@ -51,6 +51,7 @@ export default function Register() {
     const response = await register(data);
     if (response?.error) {
       setError(response);
+      setLoading(false);
     }
     router.refresh()
   }

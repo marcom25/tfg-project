@@ -7,6 +7,7 @@ import SearchBar from "@/components/common/search-bar";
 import { Suspense } from "react";
 import { ProvidersGridSkeleton } from "@/components/skeletons/home-page-skeleton";
 import FilterOptions from "@/components/common/filter-options";
+import * as argon2 from "argon2";
 
 
 export default async function Page({
@@ -31,6 +32,7 @@ export default async function Page({
   const to = params?.to || "";
   const session = await auth();
 
+  
   return (
     <div className="min-h-100">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
