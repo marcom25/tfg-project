@@ -226,7 +226,6 @@ export async function calculateWeeklyHoursByProviderId() {
       fecha_fin: true,
     },
   });
-  console.log(contracts);
   
 
   let total = 0;
